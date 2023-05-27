@@ -23,16 +23,14 @@ os.system('cls||clear')
 
 ####################(Initialized program setting)########################
 bRunSplitDataSet = False
-bPlotClientTrainInfo = True
-bPlotTestValInfo = True
-bPlotClientAccEOD = False
+bPlotClientTrainInfo = False
+bPlotTestValInfo = False
 bOutputExcel = True
-# bRunTesting = True
 todayTime = helper.GetTodayTime()
 
 ####################(Initialized Alg setting)########################
 strFedAlg = "FairFate" # [FedAvg, FairFate, FairFateVC]
-strFairMatric = "EQO" #['SP', 'EO', 'EQO']
+strFairMatric = "EO" #['SP', 'EO', 'EQO']
 intGlobalIteration = 100
 rSubsetClient = 0.5
 beta0 = 0.8 # initial Momentum parameter: [0.8, 0.9, 0.99]
@@ -48,10 +46,10 @@ if bRunSplitDataSet:
     today = date.today().strftime("%Y%m%d")
     dir_path = f'dataset_{today}'
 else:
-    today = "20230525"
+    today = "20230526"
     dir_path = f'dataset_{today}'
 
-if bPlotClientTrainInfo or bPlotClientAccEOD or bPlotTestValInfo:
+if bPlotClientTrainInfo or bPlotTestValInfo:
     plot_dir_path = helper.CreatePlotFolder(dir_path, todayTime, strFedAlg)
 
 ################################################
@@ -68,7 +66,7 @@ class Tee(object):
             file.flush()
 
 # Open the file you want to write to
-f = open(dir_path + '\\output_AlgMain.out', 'w')
+f = open(dir_path + f'\\output_AlgMain_{todayTime}.out', 'w')
 
 # Save the original stdout object for later
 original = sys.stdout
@@ -113,29 +111,40 @@ if bPlotTestValInfo:
 
 ####################(Training model start)########################
 
-# initialize a dataframe to store the client model results:
 cntFeature = listClientTrain[0].shape[1] - 1
-colClientCoef = ['iter', 'client', 'numData', 'train_acc', 'intercept'] + ['coef_x_%d'%i for i in range(1, cntFeature + 1)]
-aryGlobalCoef = []
-fGlobalInterception = None
-dfClientCoef = pd.DataFrame(columns = colClientCoef)
+
+# initialize a dataframe to store the client model results:
+colClientAccFair = ['iter', 'client', 'numData', 'Acc', 'fairType', 'fairValue', 'higher']
+dfClientAccFair = pd.DataFrame(columns = colClientAccFair)
 
 # global model coefficient and client data accuracy record
-colGlobalCoef = ['iter', 'intercept'] + ['coef_x_%d'%i for i in range(1, cntFeature + 1)]
-dfGlobalCoef = pd.DataFrame(columns = colGlobalCoef) 
-colClientAccFair = ['iter', 'client', 'Acc', 'fairType', 'fairValue', 'higher']
-dfClientAccFair = pd.DataFrame(columns = colClientAccFair)
 colServerDataAccFair = ['iter', 'dataType', 'Acc', 'fairType', 'fairValue'] # dataType = ['test', 'val']
 dfServerDataAccFair = pd.DataFrame(columns = colServerDataAccFair)
 
 print (f'----------------(start running algorithm)----------------')
 
-for t in range(0, intGlobalIteration + 1 ):
+# (t = 0): initial weights and biases
+weights_h1 = np.random.rand(cntFeature, 10) # for the first dense layer
+bias_h1 = np.random.rand(10)
+weights_out = np.random.rand(10, 1) # for the second dense layer
+bias_out = np.random.rand(1)
+model = m.CreatModelNNInit(cntFeature, weights_h1, bias_h1, weights_out, bias_out)
+dfServerDataAccFair = s.calFairness(0, False, "val", strFairMatric, model, dfServerVal, dfServerDataAccFair, F_Global=0, cIdx=0, numData=0)
+F_Global = dfServerDataAccFair[(dfServerDataAccFair["iter"] == 0) & (dfServerDataAccFair["dataType"] == "val")].fairValue.values[0]
+
+for t in range(1, intGlobalIteration + 1 ):
 
     print(f"------------ t = {t} ------------")
 
+    # copy model for client used
+    model_copy = m.CloneModelNN(model)
+
     # select subset of client
     subsetOfClient = np.sort(np.random.choice(range(1, cntClient+1), size=int(cntClient*rSubsetClient), replace=False))
+    client_HidCoef = []
+    client_HidBias = []
+    client_OutCoef = []
+    client_OutBias = []
 
     # train client model
     for k in range(len(subsetOfClient)):
@@ -143,67 +152,61 @@ for t in range(0, intGlobalIteration + 1 ):
         # client index
         cIdx = subsetOfClient[k]
         dataset = listClientTrain[cIdx-1]
+        numData = dataset.shape[0]
 
         # neural network
-        resultCoef, aryClientCoef, fClientInterception = m.train_Logistic_Regression(t, cIdx, dataset, aryGlobalCoef, fGlobalInterception)
-        dfClientCoef.loc[len(dfClientCoef.index),0:] = resultCoef
+        model_client, client_HidCoef, client_HidBias, client_OutCoef, client_OutBias = m.train_NN_SGD(t, cIdx, cntFeature, dataset, dfClientAccFair, model_copy,
+                                                                       client_HidCoef, client_HidBias,
+                                                                       client_OutCoef, client_OutBias)
 
-        if t > 0:
-            dfClientAccFair = s.calFairness(t, True, cIdx, strFairMatric, aryClientCoef, fClientInterception, dfServerVal, dfClientAccFair, F_Global)
+        # start record client model evaluation from iteration 1
+        dfClientAccFair = s.calFairness(t, True, "val", strFairMatric, model_client, dfServerVal, dfClientAccFair, F_Global, cIdx, numData)
 
-    if t == 0: 
-        # initial global model coef: FedAvg
-        aryGlobalCoef, fGlobalInterception = s.FedAvg(t, cntFeature, dfClientCoef[dfClientCoef['iter'] == t])
-        resultGlobalCoef = [t]
-        resultGlobalCoef.extend([fGlobalInterception])
-        resultGlobalCoef.extend(aryGlobalCoef)
-        dfGlobalCoef.loc[len(dfGlobalCoef.index),0:] = resultGlobalCoef
+    # select subset of client with higher fairness 
+    cIdxFair = dfClientAccFair[(dfClientAccFair["iter"] == t) & (dfClientAccFair["higher"] == "Y")].client.to_numpy()
+    F_total = dfClientAccFair[(dfClientAccFair["iter"] == t) & (dfClientAccFair["client"].isin(cIdxFair))].fairValue.sum()
 
-    else:
-        # select subset of client with higher fairness 
-        cIdxFair = dfClientAccFair[(dfClientAccFair["iter"] == t) & (dfClientAccFair["higher"] == "Y")].client.to_numpy()
-        F_total = dfClientAccFair[(dfClientAccFair["iter"] == t) & (dfClientAccFair["client"].isin(cIdxFair))].fairValue.sum()
+    # calculate alphaF
+    alphaF_weights_h1, alphaF_bias_h1, alphaF_weights_out, alphaF_bias_out = s.cal_alphaF(dfClientAccFair[(dfClientAccFair["iter"] == t) & (dfClientAccFair["client"].isin(cIdxFair))],
+                        client_HidCoef, client_HidBias, client_OutCoef, client_OutBias,
+                        weights_h1, bias_h1, weights_out, bias_out
+                        )
 
-        if len(cIdxFair) > 0:
-            alphaF = s.cal_alphaF(cntFeature,
-                                dfClientAccFair[(dfClientAccFair["iter"] == t) & (dfClientAccFair["client"].isin(cIdxFair))],
-                                dfClientCoef[(dfClientCoef["iter"] == t) & (dfClientCoef["client"].isin(cIdxFair))],
-                                dfGlobalCoef[dfGlobalCoef["iter"] == (t-1)]
-                                )
-        else:
-            alphaF = np.zeros(1+cntFeature)
+    # calculate alphaN
+    alphaN_weights_h1, alphaN_bias_h1, alphaN_weights_out, alphaN_bias_out = s.cal_alphaN(dfClientAccFair[dfClientAccFair["iter"] == t],
+                        client_HidCoef, client_HidBias, client_OutCoef, client_OutBias,
+                        weights_h1, bias_h1, weights_out, bias_out
+                        )
+    beta = beta0 * (1-t/intGlobalIteration) / ((1-beta0) + (beta0 * (1-t/intGlobalIteration)))
 
-        alphaN = s.cal_alphaN(cntFeature, 
-                            dfClientCoef[dfClientCoef["iter"] == t],
-                            dfGlobalCoef[dfGlobalCoef["iter"] == (t-1)]
-                            )
-        beta = beta0 * (1-t/intGlobalIteration) / ((1-beta0) + (beta0 * (1-t/intGlobalIteration)))
-        v = beta*v + (1-beta)*alphaF
-        lambda_t = lambda0*(1 + rho)**t
-        if lambda_t >= MAX:
-            lambda_t = MAX
+    v_weights_h1 = beta*v + (1-beta)*alphaF_weights_h1
+    v_bias_h1 = beta*v + (1-beta)*alphaF_bias_h1
+    v_weights_out = beta*v + (1-beta)*alphaF_weights_out
+    v_bias_out = beta*v + (1-beta)*alphaF_bias_out
 
-        theta_t = dfGlobalCoef[dfGlobalCoef["iter"] == (t-1)].iloc[:,1:].values.flatten()
-        theta_tp1 = theta_t + lambda_t*v + (1-lambda_t)*alphaN
+    lambda_t = lambda0*(1 + rho)**t
 
-        fGlobalInterception = theta_tp1[0]
-        aryGlobalCoef = list(theta_tp1[1:])
+    if lambda_t >= MAX:
+        lambda_t = MAX
 
-        resultGlobalCoef = [t]
-        resultGlobalCoef.extend(list(theta_tp1))
-        dfGlobalCoef.loc[len(dfGlobalCoef.index),0:] = resultGlobalCoef
+    # update theta
+    weights_h1 = weights_h1 + lambda_t*v_weights_h1 + (1-lambda_t)*alphaN_weights_h1
+    bias_h1 = bias_h1 + lambda_t*v_bias_h1 + (1-lambda_t)*alphaN_bias_h1
+    weights_out = weights_out + lambda_t*v_weights_out + (1-lambda_t)*alphaN_weights_out
+    bias_out = bias_out + lambda_t*v_bias_out + (1-lambda_t)*alphaN_bias_out
 
     # calculate fairness on validation/testing set
-    dfServerDataAccFair = s.calFairness(t, False, 'val', strFairMatric, aryGlobalCoef, fGlobalInterception, dfServerVal, dfServerDataAccFair)
-    dfServerDataAccFair = s.calFairness(t, False, 'test', strFairMatric, aryGlobalCoef, fGlobalInterception, dfServerTest, dfServerDataAccFair)
+    model = m.CreatModelNNInit(cntFeature, weights_h1, bias_h1, weights_out, bias_out)
+    dfServerDataAccFair = s.calFairness(t, False, "val", strFairMatric, model, dfServerVal, dfServerDataAccFair, F_Global, cIdx=0, numData=0)
+    dfServerDataAccFair = s.calFairness(t, False, "test", strFairMatric, model, dfServerTest, dfServerDataAccFair, F_Global, cIdx=0, numData=0)
 
-    F_Global = dfServerDataAccFair[(dfServerDataAccFair["iter"] == t) & (dfServerDataAccFair["dataType"] == "val")].fairValue.values[0]
+    F_Global = dfServerDataAccFair[(dfServerDataAccFair["iter"] == 0) & (dfServerDataAccFair["dataType"] == "val")].fairValue.values[0]
 
 
-
-# dfServerDataAccFair.to_csv(f'{dir_path}\\dfServerDataAccFair_{today}_{strFedAlg}_{strFairMatric}.csv', index=False)
-
-dfServerDataAccFair[dfServerDataAccFair["dataType"] == "test"].iloc[:,[0,2,4]].to_csv(f'{dir_path}\\dfServerDataAccFair_{today}_{strFedAlg}_{strFairMatric}.csv', index=False)
+if bOutputExcel:
+    dfClientAccFair.to_csv(f'{dir_path}\\dfClientAccFair_{today}_{strFedAlg}_{strFairMatric}.csv', index=False)
+    dfServerDataAccFair.to_csv(f'{dir_path}\\dfServerDataAccFair_{today}_{strFedAlg}_{strFairMatric}.csv', index=False)
+    dfServerDataAccFair[dfServerDataAccFair["dataType"] == "test"].iloc[:,[0,2,4]].to_csv(f'{dir_path}\\dfServerDataAccFair_{today}_{strFedAlg}_{strFairMatric}.csv', index=False)
 
 ################################################
 

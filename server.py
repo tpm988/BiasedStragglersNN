@@ -16,29 +16,32 @@ def FedAvg(iterGlobal, cntFeature, dfClientModelCoefficient):
     return aryGlobalCoef, fGlobalInterception
 
 
-def ModelEval(t, serverDataType, aryCoef, fInterception, dfServerData):
+def ModelEval(t, model, dfServerData):
 
-    X_train, y_train = c.SplitClientTrainValDataSet(dfServerData)
-    model = m.CreateModel(aryCoef, fInterception)
-    # model.predict(X_train)
-    Acc = model.score(X_train, y_train)
-    print(f"global model accuracy on {serverDataType} data: %.6f " % (Acc))
+    X_, y_ = c.SplitClientTrainValDataSet(dfServerData)
+    predictions = model.predict(X_)
+    predicted_labels = (predictions > 0.5).astype(int)
+    loss, Acc = model.evaluate(X_, y_)
 
     # return sensitive attribute and prediction result
     df = dfServerData[['SensitiveAttr', 'Label']]
     df.insert(0, "iter", t, True)
     cntdfCol = len(df.columns)
-    df.insert(cntdfCol, "Prediction", model.predict(X_train), True) # add Prediction to last column
+    df.insert(cntdfCol, "Prediction", predicted_labels, True) # add Prediction to last column
 
     return Acc, df
 
-def calFairness(t, bIsClient, DataType, strFairMatric, aryCoef, fInterception, dfServerData, dfRecordAccFair, F_Global = 0):
+def calFairness(t, bIsClient, DataType, strFairMatric, model, dfServerData, dfRecordAccFair, F_Global = 0, cIdx=0, numData=0):
 
     dfRecordAccFair.loc[len(dfRecordAccFair.index), 'iter'] = t
     idx = dfRecordAccFair[dfRecordAccFair['iter'] == t].index[-1]
 
     # create model and predict
-    Acc, df = ModelEval(t, DataType, aryCoef, fInterception, dfServerData)
+    Acc, df = ModelEval(t, model, dfServerData)
+    if bIsClient:
+        print(f'client {cIdx} accuracy on val: %.6f' % (Acc))
+    else:
+        print(f'global model accuracy on val: %.6f' % (Acc))
 
     # evaluate fairness
     if strFairMatric == "SP":
@@ -49,39 +52,73 @@ def calFairness(t, bIsClient, DataType, strFairMatric, aryCoef, fInterception, d
         fairness = m.calEQO(df)
 
     if bIsClient:
-        dfRecordAccFair.at[idx, 'client'] = DataType
+        dfRecordAccFair.at[idx, 'client'] = cIdx
+        dfRecordAccFair.at[idx, 'numData'] = numData
         if fairness >= F_Global:
             dfRecordAccFair.at[idx, 'higher'] = "Y"
         else:
             dfRecordAccFair.at[idx, 'higher'] = "N"
     else:
         dfRecordAccFair.at[idx, 'dataType'] = DataType
+
     dfRecordAccFair.at[idx, 'Acc'] = Acc
     dfRecordAccFair.at[idx, 'fairType'] = strFairMatric
     dfRecordAccFair.at[idx, 'fairValue'] = fairness
 
     return dfRecordAccFair
 
-def cal_alphaF(cntFeature, dfClientAccFair, dfClientCoef, dfGlobalCoef):
+def cal_alphaF(dfClientAccFair, client_HidCoef, client_HidBias, client_OutCoef, client_OutBias, weights_h1, bias_h1, weights_out, bias_out):
 
-    alphaF = []
-    totalF = dfClientAccFair['fairValue'].sum()
-    arycol = ['intercept'] + ['coef_x_%d' %i for i in range(1,cntFeature+1)]
+    if len(dfClientAccFair) == 0:
+        alphaF_weights_h1 = weights_h1*0
+        alphaF_bias_h1 = bias_h1*0
+        alphaF_weights_out = weights_out*0
+        alphaF_bias_out = bias_out*0
+    else:
+        totalF = dfClientAccFair['fairValue'].sum()
+        aryFairValue = np.array(dfClientAccFair["fairValue"])
+        ratios = np.array(aryFairValue / totalF)
+        lsClientIdx = list(dfClientAccFair["client"] - 1)
 
-    for i in range(len(arycol)):
-        col = arycol[i]
-        alphaF.append(np.dot((dfClientCoef[col] - dfGlobalCoef[col].values[0]), (dfClientAccFair['fairValue'] / totalF)))
+        weights_h1_clients = client_HidCoef[lsClientIdx]
+        weights_h1_diffs = np.array([r * (w - weights_h1) for r, w in zip(ratios, weights_h1_clients)])
+        alphaF_weights_h1 = weights_h1_diffs.sum(axis=0)
 
-    return np.array(alphaF)
+        bias_h1_clients = client_HidBias[lsClientIdx]
+        bias_h1_diffs = np.array([r * (w - bias_h1) for r, w in zip(ratios, bias_h1_clients)])
+        alphaF_bias_h1 = bias_h1_diffs.sum(axis=0)
 
-def cal_alphaN(cntFeature, dfClientCoef, dfGlobalCoef):
+        weights_out_clients = client_OutCoef[lsClientIdx]
+        weights_out_diffs = np.array([r * (w - weights_out) for r, w in zip(ratios, weights_out_clients)])
+        alphaF_weights_out = weights_out_diffs.sum(axis=0)
 
-    alphaN = []
-    totalNumData = dfClientCoef['numData'].sum()
-    arycol = ['intercept'] + ['coef_x_%d' %i for i in range(1,cntFeature+1)]
+        bias_out_clients = client_OutBias[lsClientIdx]
+        bias_out_diffs = np.array([r * (w - bias_out) for r, w in zip(ratios, bias_out_clients)])
+        alphaF_bias_out = bias_out_diffs.sum(axis=0)
 
-    for i in range(len(arycol)):
-        col = arycol[i]
-        alphaN.append(np.dot((dfClientCoef[col] - dfGlobalCoef[col].values[0]),(dfClientCoef['numData'] / totalNumData)))
+    return alphaF_weights_h1, alphaF_bias_h1, alphaF_weights_out, alphaF_bias_out
 
-    return np.array(alphaN)
+def cal_alphaN(dfClientAccFair, client_HidCoef, client_HidBias, client_OutCoef, client_OutBias, weights_h1, bias_h1, weights_out, bias_out):
+
+    totalNumData = dfClientAccFair['numData'].sum()
+    aryNumData = np.array(dfClientAccFair["numData"])
+    ratios = np.array(aryNumData / totalNumData)
+    lsClientIdx = list(dfClientAccFair["client"] - 1)
+
+    weights_h1_clients = client_HidCoef[lsClientIdx]
+    weights_h1_diffs = np.array([r * (w - weights_h1) for r, w in zip(ratios, weights_h1_clients)])
+    alphaN_weights_h1 = weights_h1_diffs.sum(axis=0)
+
+    bias_h1_clients = client_HidBias[lsClientIdx]
+    bias_h1_diffs = np.array([r * (w - bias_h1) for r, w in zip(ratios, bias_h1_clients)])
+    alphaN_bias_h1 = bias_h1_diffs.sum(axis=0)
+
+    weights_out_clients = client_OutCoef[lsClientIdx]
+    weights_out_diffs = np.array([r * (w - weights_out) for r, w in zip(ratios, weights_out_clients)])
+    alphaN_weights_out = weights_out_diffs.sum(axis=0)
+
+    bias_out_clients = client_OutBias[lsClientIdx]
+    bias_out_diffs = np.array([r * (w - bias_out) for r, w in zip(ratios, bias_out_clients)])
+    alphaN_bias_out = bias_out_diffs.sum(axis=0)
+
+    return alphaN_weights_h1, alphaN_bias_h1, alphaN_weights_out, alphaN_bias_out

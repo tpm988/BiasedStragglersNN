@@ -41,7 +41,7 @@ todayTime = helper.GetTodayTime()
 dirname = helper.CreateDatasetFolder(today)
 
 # Open the file you want to write to
-f = open(dirname + '\\output_dataset.out', 'w')
+f = open(dirname + f'\\output_dataset_{todayTime}.out', 'w')
 
 # Save the original stdout object for later
 original = sys.stdout
@@ -476,7 +476,7 @@ stddev_samples_per_client = 300
 # plot_dirichlet_histogram(alpha=0.5, num_clients=3)
 
 
-# dfTrain, dfVal, dfTest, client_datasets = split_existed_to_train_val_test(rTrain=0.6, rVal=0.2, rTest=0.2, alpha=1, num_clients=10)
+# split_existed_to_train_val_test(rTrain=0.6, rVal=0.2, rTest=0.2, alpha=1, num_clients=10)
 # client_datasets = split_existed_dataset_in_heterogeneity(alpha=1, num_clients=9)
 
 

@@ -6,6 +6,30 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import SGDClassifier
 
 ######(Create model)######
+def CreatModelNNInit(n_features, weights_h1, bias_h1, weights_out, bias_out):
+    model = tf.keras.models.Sequential([
+            tf.keras.layers.InputLayer(input_shape=(n_features,)),
+            tf.keras.layers.Dense(10, activation='tanh', 
+                                kernel_initializer=tf.constant_initializer(weights_h1),
+                                bias_initializer=tf.constant_initializer(bias_h1)),
+            tf.keras.layers.Dense(1, activation='sigmoid', 
+                                kernel_initializer=tf.constant_initializer(weights_out),
+                                bias_initializer=tf.constant_initializer(bias_out))
+        ])
+    
+    sgd = tf.keras.optimizers.SGD(learning_rate=0.01)
+    model.compile(optimizer=sgd, loss='binary_crossentropy', metrics=['accuracy'])  
+    
+    return model
+
+def CloneModelNN(model):
+    weights = model.get_weights()
+    model_copy = tf.keras.models.clone_model(model)
+    model_copy.set_weights(weights)
+
+    return model_copy
+
+# not used
 def CreateModelNN(n_features, aryHidCoef, fHidInterception, aryOutCoef, fOutInterception):
     # create model
     model = tf.keras.models.Sequential([
@@ -29,17 +53,17 @@ def CreateModelNN(n_features, aryHidCoef, fHidInterception, aryOutCoef, fOutInte
     return model
 
 ######(Train client model)######
-def train_NN_SGD(iterGlobal, idxClient, n_features, dfClientData, global_HidCoef, global_OutCoef):
+def train_NN_SGD(iterGlobal, idxClient, n_features, dfClientData, dfClientAccFair, model, client_HidCoef, client_HidBias, client_OutCoef, client_OutBias):
 
     x_train, y_train = client.SplitClientTrainValDataSet(dfClientData)
 
-    aryHidCoef = global_HidCoef[idxClient-1][1:]
-    fHidInterception = global_HidCoef[idxClient-1][0]
-    aryOutCoef = global_OutCoef[idxClient-1][1:]
-    fOutInterception = global_OutCoef[idxClient-1][0]
+    # aryHidCoef = global_HidCoef[idxClient-1][1:]
+    # fHidInterception = global_HidCoef[idxClient-1][0]
+    # aryOutCoef = global_OutCoef[idxClient-1][1:]
+    # fOutInterception = global_OutCoef[idxClient-1][0]
 
     # create model
-    model = CreateModelNN(n_features, aryHidCoef, fHidInterception, aryOutCoef, fOutInterception) 
+    # model = CreateModelNN(n_features, aryHidCoef, fHidInterception, aryOutCoef, fOutInterception) 
     sgd = tf.keras.optimizers.SGD(learning_rate=0.01)
     model.compile(optimizer=sgd, loss='binary_crossentropy', metrics=['accuracy'])
 
@@ -54,19 +78,27 @@ def train_NN_SGD(iterGlobal, idxClient, n_features, dfClientData, global_HidCoef
     print("training accuracy (client %s) : %.6f " % (str(idxClient), acc_train))
 
     # Retrieve weights and biases
-    if (iterGlobal == 0) and ():
-        client_HidCoef = np.zeros((5, 1 + model.layers[1].get_weights()[0].size))
-        client_OutCoef = np.zeros((5, 1 + model.layers[2].get_weights()[0].size))
-    aryHidCoef, fHidInterception = model.layers[1].get_weights()
-    aryOutCoef, fOutInterception = model.layers[2].get_weights()
-
-    # Flatten the weights and append the bias
-    hidden_layer_values = np.append(fHidInterception, aryHidCoef.flatten())
-    output_layer_values = np.append(fOutInterception, aryOutCoef.flatten())
+    client_weights_h1 = model.get_weights()[0]
+    client_bias_h1 = model.get_weights()[1]
+    client_weights_out = model.get_weights()[2]
+    client_bias_out = model.get_weights()[3]
 
     # Store in your arrays
-    client_HidCoef[iterGlobal] = hidden_layer_values
-    client_OutCoef[iterGlobal] = output_layer_values
+    if iterGlobal == 1:
+        client_HidCoef = client_weights_h1
+        client_HidBias = client_bias_h1
+        client_OutCoef = client_weights_out
+        client_OutBias = client_bias_out
+    else:
+        client_HidCoef = np.vstack((client_HidCoef, client_weights_h1))
+        client_HidBias = np.vstack((client_HidBias, client_bias_h1))
+        client_OutCoef = np.vstack((client_OutCoef, client_weights_out))
+        client_OutBias = np.vstack((client_OutBias, client_bias_out))
+
+    # copy model for evaluation
+    model_client = CloneModelNN(model)
+
+    return model_client, client_HidCoef, client_HidBias, client_OutCoef, client_OutBias
 
 def calSP(df):
 
