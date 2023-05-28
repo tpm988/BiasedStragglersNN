@@ -26,8 +26,8 @@ class Tee(object):
 
 ####################(Initialized program setting)########################
 bRunSplitDataSet = False
-bPlotClientTrainInfo = False
-bPlotTestValInfo = False
+bPlotClientTrainInfo = True
+bPlotTestValInfo = True
 bOutputExcel = True
 todayTime = helper.GetTodayTime()
 
@@ -38,25 +38,25 @@ if bRunSplitDataSet:
     today = date.today().strftime("%Y%m%d")
     dir_path = f'dataset_{today}'
 else:
-    today = "20230526"
+    today = "20230528"
     dir_path = f'dataset_{today}'
 
 ####################(Initialized Alg setting)########################
 strFedAlg = "FairFate" # [FedAvg, FairFate, FairFateVC]
 intRun = 3
-intGlobalIteration = 5
-rSubsetClient = 0.5
-METRICS_values = ['SP']
-beta0_values = [0.8] # initial Momentum parameter: [0.8, 0.9, 0.99]
+intGlobalIteration = 50
+rSubsetClient = 0.3
+METRICS_values = ['SP', 'EO', 'EQO']
+beta0_values = [0.9] # initial Momentum parameter: [0.8, 0.9, 0.99]
 rho_values = [0.04] # growth rate: [0.04, 0.05]
 lr_values = [0.01] # learning rate: [0.01, 0.02]
-lambda0_values = [0.5] # initial fairness amount: [0.1, 0.5]
-MAX_values = [0.8] # maximum fairness amount: [0.8, 0.9, 1.0]
+lambda0_values = [0.1] # initial fairness amount: [0.1, 0.5]
+MAX_values = [0.9] # maximum fairness amount: [0.8, 0.9, 1.0]
 
 # strFedAlg = "FairFate" # [FedAvg, FairFate, FairFateVC]
 # intRun = 10
 # intGlobalIteration = 100
-# rSubsetClient = 0.5
+# rSubsetClient = 0.3
 # METRICS_values = ['SP', 'EO', 'EQO']
 # beta0_values = [0.8, 0.9, 0.99]
 # rho_values = [0.04, 0.05]
