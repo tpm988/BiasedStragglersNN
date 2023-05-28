@@ -31,6 +31,15 @@ def CreatePlotFolder(dir_path, todayTime, strFedAlg):
 
     return dirname
 
+def CreateResultFolder(dir_path, todayTime, strFedAlg):
+
+    # create plot folder
+    if not os.path.exists(dir_path + f'\\result_{strFedAlg}_{todayTime}'):
+        os.makedirs(dir_path + f'\\result_{strFedAlg}_{todayTime}')
+    dirname = dir_path + f'\\result_{strFedAlg}_{todayTime}'
+
+    return dirname
+
 def CreateDatasetFolder(date):
 
     # create dataset folder

@@ -19,9 +19,9 @@ def FedAvg(iterGlobal, cntFeature, dfClientModelCoefficient):
 def ModelEval(t, model, dfServerData):
 
     X_, y_ = c.SplitClientTrainValDataSet(dfServerData)
-    predictions = model.predict(X_)
+    predictions = model.predict(X_, verbose=0)
     predicted_labels = (predictions > 0.5).astype(int)
-    loss, Acc = model.evaluate(X_, y_)
+    loss, Acc = model.evaluate(X_, y_, verbose=0)
 
     # return sensitive attribute and prediction result
     df = dfServerData[['SensitiveAttr', 'Label']]
@@ -38,10 +38,6 @@ def calFairness(t, bIsClient, DataType, strFairMatric, model, dfServerData, dfRe
 
     # create model and predict
     Acc, df = ModelEval(t, model, dfServerData)
-    if bIsClient:
-        print(f'client {cIdx} accuracy on val: %.6f' % (Acc))
-    else:
-        print(f'global model accuracy on val: %.6f' % (Acc))
 
     # evaluate fairness
     if strFairMatric == "SP":
@@ -52,13 +48,18 @@ def calFairness(t, bIsClient, DataType, strFairMatric, model, dfServerData, dfRe
         fairness = m.calEQO(df)
 
     if bIsClient:
+        print(f'client {cIdx} accuracy on {DataType}: %.6f' % (Acc))
+        print(f'client {cIdx} fairness({strFairMatric}) on {DataType}: %.6f' % (fairness))
         dfRecordAccFair.at[idx, 'client'] = cIdx
         dfRecordAccFair.at[idx, 'numData'] = numData
         if fairness >= F_Global:
             dfRecordAccFair.at[idx, 'higher'] = "Y"
         else:
             dfRecordAccFair.at[idx, 'higher'] = "N"
+        
     else:
+        print(f'global model accuracy on {DataType}: %.6f' % (Acc))
+        print(f'global model fairness({strFairMatric}) on {DataType}: %.6f' % (fairness))
         dfRecordAccFair.at[idx, 'dataType'] = DataType
 
     dfRecordAccFair.at[idx, 'Acc'] = Acc
@@ -77,8 +78,11 @@ def cal_alphaF(dfClientAccFair, client_HidCoef, client_HidBias, client_OutCoef, 
     else:
         totalF = dfClientAccFair['fairValue'].sum()
         aryFairValue = np.array(dfClientAccFair["fairValue"])
-        ratios = np.array(aryFairValue / totalF)
-        lsClientIdx = list(dfClientAccFair["client"] - 1)
+        if totalF > 0:
+            ratios = np.array(aryFairValue / totalF)
+        else:
+            ratios = aryFairValue*0
+        lsClientIdx = dfClientAccFair.index.to_list()
 
         weights_h1_clients = client_HidCoef[lsClientIdx]
         weights_h1_diffs = np.array([r * (w - weights_h1) for r, w in zip(ratios, weights_h1_clients)])
@@ -103,7 +107,7 @@ def cal_alphaN(dfClientAccFair, client_HidCoef, client_HidBias, client_OutCoef, 
     totalNumData = dfClientAccFair['numData'].sum()
     aryNumData = np.array(dfClientAccFair["numData"])
     ratios = np.array(aryNumData / totalNumData)
-    lsClientIdx = list(dfClientAccFair["client"] - 1)
+    lsClientIdx = dfClientAccFair.index.to_list()
 
     weights_h1_clients = client_HidCoef[lsClientIdx]
     weights_h1_diffs = np.array([r * (w - weights_h1) for r, w in zip(ratios, weights_h1_clients)])

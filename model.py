@@ -2,11 +2,43 @@ import client
 #-----------------------
 import numpy as np
 import tensorflow as tf
-from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model import SGDClassifier
+# from sklearn.linear_model import LogisticRegression
+# from sklearn.linear_model import SGDClassifier
+
+bFirst = True
+bSecond = True
+iIterGlobal = 1
 
 ######(Create model)######
-def CreatModelNNInit(n_features, weights_h1, bias_h1, weights_out, bias_out):
+def ModelCompile(model, lr):
+
+    sgd = tf.keras.optimizers.SGD(learning_rate=lr)
+    model.compile(optimizer=sgd, loss='binary_crossentropy', metrics=['accuracy'])  
+
+    return model   
+
+def CreatModelNNInit(n_features, lr):
+
+    model = tf.keras.models.Sequential([
+            tf.keras.layers.InputLayer(input_shape=(n_features,)),
+            tf.keras.layers.Dense(10, activation='tanh', 
+                                kernel_initializer='he_normal'), # glorot_normal, glorot_uniform
+            tf.keras.layers.Dense(1, activation='sigmoid', 
+                                kernel_initializer='he_normal')
+        ])
+    
+    model = ModelCompile(model, lr)
+    
+    # Get weights and biases for layers
+    weights_h1 = model.get_weights()[0]
+    bias_h1 = model.get_weights()[1]
+    weights_out = model.get_weights()[2]
+    bias_out = model.get_weights()[3]
+    
+    return model, weights_h1, bias_h1, weights_out, bias_out
+
+def CreatModelNN(n_features, lr, weights_h1, bias_h1, weights_out, bias_out):
+
     model = tf.keras.models.Sequential([
             tf.keras.layers.InputLayer(input_shape=(n_features,)),
             tf.keras.layers.Dense(10, activation='tanh', 
@@ -17,58 +49,42 @@ def CreatModelNNInit(n_features, weights_h1, bias_h1, weights_out, bias_out):
                                 bias_initializer=tf.constant_initializer(bias_out))
         ])
     
-    sgd = tf.keras.optimizers.SGD(learning_rate=0.01)
-    model.compile(optimizer=sgd, loss='binary_crossentropy', metrics=['accuracy'])  
+    model = ModelCompile(model, lr)
     
     return model
 
-def CloneModelNN(model):
+def CloneModelNN(model, lr):
+
     weights = model.get_weights()
     model_copy = tf.keras.models.clone_model(model)
     model_copy.set_weights(weights)
 
+    model_copy = ModelCompile(model_copy, lr)
+
     return model_copy
 
-# not used
-def CreateModelNN(n_features, aryHidCoef, fHidInterception, aryOutCoef, fOutInterception):
-    # create model
-    model = tf.keras.models.Sequential([
-        tf.keras.layers.InputLayer(input_shape=(n_features,)),
-        tf.keras.layers.Dense(10, activation='tanh'),
-        tf.keras.layers.Dense(1, activation='sigmoid')
-    ])
-    
-    if len(aryHidCoef) > 0:
-        # Weights and biases for the hidden layer
-        hidden_weights = np.array(aryHidCoef).reshape(n_features, -1)
-        hidden_biases = np.array(fHidInterception).reshape(-1)
-        model.layers[1].set_weights([hidden_weights, hidden_biases])
-
-        # Weights and biases for the output layer
-        # (you'll need to supply appropriate values for these)
-        output_weights = np.array(aryOutCoef).reshape(10, 1)
-        output_biases = np.array(fOutInterception).reshape(-1)
-        model.layers[2].set_weights([output_weights, output_biases])
-
-    return model
-
 ######(Train client model)######
-def train_NN_SGD(iterGlobal, idxClient, n_features, dfClientData, dfClientAccFair, model, client_HidCoef, client_HidBias, client_OutCoef, client_OutBias):
+def train_NN_SGD(iterGlobal, idxClient, dfClientData, model, lr, client_HidCoef, client_HidBias, client_OutCoef, client_OutBias):
+
+    global iIterGlobal
+    global bFirst
+    global bSecond
+    if iterGlobal > iIterGlobal: # within the same run: always iterGlobal >= iIterGlobal 
+        iIterGlobal += 1
+        bFirst = True
+        bSecond = True
+
+    if iterGlobal < iIterGlobal: # next run: initialize
+        iIterGlobal = 1
+        bFirst = True
+        bSecond = True
 
     x_train, y_train = client.SplitClientTrainValDataSet(dfClientData)
 
-    # aryHidCoef = global_HidCoef[idxClient-1][1:]
-    # fHidInterception = global_HidCoef[idxClient-1][0]
-    # aryOutCoef = global_OutCoef[idxClient-1][1:]
-    # fOutInterception = global_OutCoef[idxClient-1][0]
-
-    # create model
-    # model = CreateModelNN(n_features, aryHidCoef, fHidInterception, aryOutCoef, fOutInterception) 
-    sgd = tf.keras.optimizers.SGD(learning_rate=0.01)
-    model.compile(optimizer=sgd, loss='binary_crossentropy', metrics=['accuracy'])
+    model = ModelCompile(model, lr)
 
     # Train the model
-    history = model.fit(x_train, y_train, batch_size=10, epochs=10) # , validation_data=(x_val, y_val)
+    history = model.fit(x_train, y_train, batch_size=32, epochs=10, verbose=0) # , validation_data=(x_val, y_val)
 
     # Get the accuracy
     acc_train = history.history['accuracy'][-1]
@@ -84,24 +100,29 @@ def train_NN_SGD(iterGlobal, idxClient, n_features, dfClientData, dfClientAccFai
     client_bias_out = model.get_weights()[3]
 
     # Store in your arrays
-    if iterGlobal == 1:
+    if bFirst:
         client_HidCoef = client_weights_h1
         client_HidBias = client_bias_h1
         client_OutCoef = client_weights_out
         client_OutBias = client_bias_out
+        bFirst = False
+    elif bSecond:
+        client_HidCoef = np.stack((client_HidCoef, client_weights_h1))
+        client_HidBias = np.stack((client_HidBias, client_bias_h1))
+        client_OutCoef = np.stack((client_OutCoef, client_weights_out))
+        client_OutBias = np.stack((client_OutBias, client_bias_out))
+        bSecond = False
     else:
-        client_HidCoef = np.vstack((client_HidCoef, client_weights_h1))
-        client_HidBias = np.vstack((client_HidBias, client_bias_h1))
-        client_OutCoef = np.vstack((client_OutCoef, client_weights_out))
-        client_OutBias = np.vstack((client_OutBias, client_bias_out))
+        client_HidCoef = np.concatenate((client_HidCoef, client_weights_h1[np.newaxis, :]), axis=0)
+        client_HidBias = np.concatenate((client_HidBias, client_bias_h1[np.newaxis, :]))
+        client_OutCoef = np.concatenate((client_OutCoef, client_weights_out[np.newaxis, :]))
+        client_OutBias = np.concatenate((client_OutBias, client_bias_out[np.newaxis, :]))
 
-    # copy model for evaluation
-    model_client = CloneModelNN(model)
-
-    return model_client, client_HidCoef, client_HidBias, client_OutCoef, client_OutBias
+    return model, client_HidCoef, client_HidBias, client_OutCoef, client_OutBias
 
 def calSP(df):
 
+    SP = 0
     totalPrivileged = df[df['SensitiveAttr'] == 1].shape[0]
     totalUnprivileged = df[df['SensitiveAttr'] == 0].shape[0]
     totalPrivilegedPredictY1 = df[(df['SensitiveAttr'] == 1) & (df['Prediction'] == 1)].shape[0]
@@ -110,12 +131,14 @@ def calSP(df):
     probPrivileged = totalPrivilegedPredictY1 / totalPrivileged
     probUnprivileged = totalUnprivilegedPredictY1 / totalUnprivileged
 
-    SP = round(probUnprivileged / probPrivileged, 4)
+    if (probPrivileged > 0):
+        SP = round(probUnprivileged / probPrivileged, 4)
 
     return SP
 
 def calEO(df):
 
+    EO = 0
     totalPrivilegedY1 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 1)].shape[0]
     totalUnprivilegedY1 = df[(df['SensitiveAttr'] == 0) & (df['Label'] == 1)].shape[0]
     totalPrivilegedY1PredictY1 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 1) & (df['Prediction'] == 1)].shape[0]
@@ -124,12 +147,14 @@ def calEO(df):
     probPrivileged = totalPrivilegedY1PredictY1 / totalPrivilegedY1
     probUnprivileged = totalUnprivilegedY1PredictY1 / totalUnprivilegedY1
 
-    EO = round(probUnprivileged / probPrivileged, 4)
+    if (probPrivileged > 0):
+        EO = round(probUnprivileged / probPrivileged, 4)
 
     return EO
 
 def calEQO(df):
 
+    EQO = 0
     totalPrivilegedY1 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 1)].shape[0]
     totalUnprivilegedY1 = df[(df['SensitiveAttr'] == 0) & (df['Label'] == 1)].shape[0]
     totalPrivilegedY1PredictY1 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 1) & (df['Prediction'] == 1)].shape[0]
@@ -150,7 +175,8 @@ def calEQO(df):
     probPrivileged = (TPPrivileged + FPPrivileged) / 2
     probUnprivileged = (TPUnprivileged + FPUnprivileged) / 2
 
-    EQO = round(probUnprivileged / probPrivileged, 4)
+    if (probPrivileged > 0):
+        EQO = round(probUnprivileged / probPrivileged, 4)
 
     return EQO
 

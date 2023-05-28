@@ -1,11 +1,9 @@
 import helper
 #-----------------------
 import os
-import fnmatch
 import warnings
 import time
 import sys
-from datetime import date
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -354,7 +352,6 @@ def splitCustomizedDataSet(df, alpha, num_clients):
     
     end_time = time.time()
     print (f'----------------(finish splitting client datasets took {end_time - start_time})----------------')
-
 
 def split_existed_dataset_in_heterogeneity(df=pd.DataFrame(), alpha=0.5, num_clients=4, dirname=""):
 
