@@ -17,14 +17,15 @@ def ModelCompile(model, lr):
 
     return model   
 
-def CreatModelNNInit(n_features, lr):
-
+def CreatModelNNInit(n_features, lr, run):
+    # seed = run*10
+    # initializer = tf.keras.initializers.RandomNormal(seed=seed)
     model = tf.keras.models.Sequential([
             tf.keras.layers.InputLayer(input_shape=(n_features,)),
             tf.keras.layers.Dense(10, activation='tanh', 
-                                kernel_initializer='he_normal'), # glorot_normal, glorot_uniform
+                                kernel_initializer='glorot_normal'), # he_normal, glorot_normal, glorot_uniform
             tf.keras.layers.Dense(1, activation='sigmoid', 
-                                kernel_initializer='he_normal')
+                                kernel_initializer='glorot_normal')
         ])
     
     model = ModelCompile(model, lr)
@@ -120,41 +121,83 @@ def train_NN_SGD(iterGlobal, idxClient, dfClientData, model, lr, client_HidCoef,
 
     return model, client_HidCoef, client_HidBias, client_OutCoef, client_OutBias
 
-def calSP(df):
+def calSP(df, bIsClient, strPrivileged):
 
-    SP = 0
+    fairValue = 0
+    evaPrivileged = 'Y'
     totalPrivileged = df[df['SensitiveAttr'] == 1].shape[0]
     totalUnprivileged = df[df['SensitiveAttr'] == 0].shape[0]
     totalPrivilegedPredictY1 = df[(df['SensitiveAttr'] == 1) & (df['Prediction'] == 1)].shape[0]
     totalUnprivilegedPredictY1 = df[(df['SensitiveAttr'] == 0) & (df['Prediction'] == 1)].shape[0]
 
+    if totalPrivileged == 0 or totalUnprivileged == 0:
+        return fairValue, evaPrivileged
+
     probPrivileged = totalPrivilegedPredictY1 / totalPrivileged
     probUnprivileged = totalUnprivilegedPredictY1 / totalUnprivileged
+    
+    if bIsClient:
+        if (strPrivileged == 'Y') and (probPrivileged > 0):
+            fairValue = round(probUnprivileged / probPrivileged, 4)
+            return fairValue, evaPrivileged
+        elif (strPrivileged == 'N') and (probUnprivileged > 0):
+            fairValue = round(probPrivileged / probUnprivileged, 4)
+            return fairValue, evaPrivileged
+        else:
+            return fairValue, evaPrivileged
 
-    if (probPrivileged > 0):
-        SP = round(probUnprivileged / probPrivileged, 4)
+    else: # global model
+        if probUnprivileged > probPrivileged:
+            evaPrivileged = 'N'
+            fairValue = round(probPrivileged / probUnprivileged, 4)
+            return fairValue, evaPrivileged
+        elif probPrivileged > probUnprivileged:
+            fairValue = round(probUnprivileged / probPrivileged, 4)
+            return fairValue, evaPrivileged
+        else:
+            return fairValue, evaPrivileged
 
-    return SP
+def calEO(df, bIsClient, strPrivileged): # True Positive Rate
 
-def calEO(df):
-
-    EO = 0
+    fairValue = 0
+    evaPrivileged = 'Y'
     totalPrivilegedY1 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 1)].shape[0]
     totalUnprivilegedY1 = df[(df['SensitiveAttr'] == 0) & (df['Label'] == 1)].shape[0]
     totalPrivilegedY1PredictY1 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 1) & (df['Prediction'] == 1)].shape[0]
     totalUnprivilegedY1PredictY1 = df[(df['SensitiveAttr'] == 0) & (df['Label'] == 1) & (df['Prediction'] == 1)].shape[0]
 
+    if totalPrivilegedY1 == 0 or totalUnprivilegedY1 == 0:
+        return fairValue, evaPrivileged
+
     probPrivileged = totalPrivilegedY1PredictY1 / totalPrivilegedY1
     probUnprivileged = totalUnprivilegedY1PredictY1 / totalUnprivilegedY1
 
-    if (probPrivileged > 0):
-        EO = round(probUnprivileged / probPrivileged, 4)
+    if bIsClient:
+        if (strPrivileged == 'Y') and (probPrivileged > 0):
+            fairValue = round(probUnprivileged / probPrivileged, 4)
+            return fairValue, evaPrivileged
+        elif (strPrivileged == 'N') and (probUnprivileged > 0):
+            fairValue = round(probPrivileged / probUnprivileged, 4)
+            return fairValue, evaPrivileged
+        else:
+            return fairValue, evaPrivileged
 
-    return EO
+    else: # global model
+        if probUnprivileged > probPrivileged:
+            evaPrivileged = 'N'
+            fairValue = round(probPrivileged / probUnprivileged, 4)
+            return fairValue, evaPrivileged
+        elif probPrivileged > probUnprivileged:
+            fairValue = round(probUnprivileged / probPrivileged, 4)
+            return fairValue, evaPrivileged
+        else:
+            return fairValue, evaPrivileged
 
-def calEQO(df):
 
-    EQO = 0
+def calEQO(df, bIsClient, strPrivileged):
+
+    fairValue = 0
+    evaPrivileged = 'Y'
     totalPrivilegedY1 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 1)].shape[0]
     totalUnprivilegedY1 = df[(df['SensitiveAttr'] == 0) & (df['Label'] == 1)].shape[0]
     totalPrivilegedY1PredictY1 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 1) & (df['Prediction'] == 1)].shape[0]
@@ -166,19 +209,50 @@ def calEQO(df):
     totalUnprivilegedY0PredictY1 = df[(df['SensitiveAttr'] == 0) & (df['Label'] == 0) & (df['Prediction'] == 1)].shape[0]
 
     # TP: true positive; FP: false positive
-    TPPrivileged = totalPrivilegedY1PredictY1 / totalPrivilegedY1
-    FPPrivileged = totalPrivilegedY0PredictY1 / totalPrivilegedY0
-    TPUnprivileged = totalUnprivilegedY1PredictY1 / totalUnprivilegedY1
-    FPUnprivileged = totalUnprivilegedY0PredictY1 / totalUnprivilegedY0
+    if totalPrivilegedY1 == 0:
+        TPPrivileged = 0
+    else:
+        TPPrivileged = totalPrivilegedY1PredictY1 / totalPrivilegedY1
+
+    if totalPrivilegedY0 == 0:
+        FPPrivileged = 0
+    else:
+        FPPrivileged = totalPrivilegedY0PredictY1 / totalPrivilegedY0
+
+    if totalUnprivilegedY1 == 0:
+        TPUnprivileged = 0
+    else:
+        TPUnprivileged = totalUnprivilegedY1PredictY1 / totalUnprivilegedY1
+
+    if totalUnprivilegedY0 == 0:
+        FPUnprivileged = 0
+    else:
+        FPUnprivileged = totalUnprivilegedY0PredictY1 / totalUnprivilegedY0
 
     # TP + FP mean
     probPrivileged = (TPPrivileged + FPPrivileged) / 2
     probUnprivileged = (TPUnprivileged + FPUnprivileged) / 2
 
-    if (probPrivileged > 0):
-        EQO = round(probUnprivileged / probPrivileged, 4)
+    if bIsClient:
+        if (strPrivileged == 'Y') and (probPrivileged > 0):
+            fairValue = round(probUnprivileged / probPrivileged, 4)
+            return fairValue, evaPrivileged
+        elif (strPrivileged == 'N') and (probUnprivileged > 0):
+            fairValue = round(probPrivileged / probUnprivileged, 4)
+            return fairValue, evaPrivileged
+        else:
+            return fairValue, evaPrivileged
 
-    return EQO
+    else: # global model
+        if probUnprivileged > probPrivileged:
+            evaPrivileged = 'N'
+            fairValue = round(probPrivileged / probUnprivileged, 4)
+            return fairValue, evaPrivileged
+        elif probPrivileged > probUnprivileged:
+            fairValue = round(probUnprivileged / probPrivileged, 4)
+            return fairValue, evaPrivileged
+        else:
+            return fairValue, evaPrivileged
 
 def calAcc(df):
     
