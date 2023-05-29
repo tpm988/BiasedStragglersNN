@@ -33,23 +33,6 @@ class Tee(object):
             file.flush()
 
 
-today = helper.GetToday()
-todayTime = helper.GetTodayTime()
-# create dataset folder
-dirname = helper.CreateDatasetFolder(today)
-
-# Open the file you want to write to
-f = open(dirname + f'\\output_dataset_{todayTime}.out', 'w')
-
-# Save the original stdout object for later
-original = sys.stdout
-
-# Replace stdout with a Tee, so output goes to stdout and the file
-sys.stdout = Tee(sys.stdout, f)
-
-# print(f"today time: {todayTime}")
-# print(f"dirname: {dirname}")
-
 ################################################
 # create synthetic dataset
 
@@ -249,23 +232,38 @@ def get_hetero_data_dist_per_client(alpha, num_clients, num_classes, mean_sample
 #################################################################
 # For existed dataset used
 
-def split_existed_to_train_val_test(rTrain, rVal, rTest, alpha, num_clients):
+def split_existed_to_train_val_test(today_path, strFairMatric, run, rTrain, rVal, rTest, alpha, num_clients):
+
+    todayTime = helper.GetTodayTime()
+    # create dataset folder
+    dirname = helper.CreateDatasetFolder(today_path, strFairMatric, run)
+
+    f = open(dirname + f'\\output_dataset_{todayTime}.out', 'w')
+    original = sys.stdout
+    sys.stdout = Tee(sys.stdout, f)
 
     start_time = time.time()
     os.system('cls||clear')
-    random_seed = 5
+    # dataset = 'adult_used.csv'
+    dataset = 'law.csv'
 
     print("------------Execute (split_train_val_test)------------")
     print(f"rTrain: {rTrain}, rVal: {rVal}, rTest: {rTest}, alpha: {alpha}, num_clients: {num_clients}")
-    print(f"alpha: {alpha}, num_clients: {num_clients}")
 
-    # Load the Adult dataset.
-    df = pd.read_csv('adult_used.csv')
-    df.rename({'sex_Male': 'SensitiveAttr', 'income_>50K': 'Label'}, axis=1, inplace=True)
+    # Load dataset
+
+    df = pd.read_csv(dataset)
+    df = shuffle(df)
+    # df.rename({'sex_Male': 'SensitiveAttr', 'income_>50K': 'Label'}, axis=1, inplace=True)
+
+    df['race'] = df['race'].map({'White': 1, 'Non-White': 0})
+    df['pass_bar'] = df['pass_bar'].astype(int)
+    df.rename({'race': 'SensitiveAttr', 'pass_bar': 'Label'}, axis=1, inplace=True)
+
     numDataRow = df.shape[0]
     numDataRowOfVal = int(numDataRow*rVal)
     numDataRowOfTest = int(numDataRow*rTest)
-    print(f'Total number of data row in adult_clean.csv: {numDataRow}')
+    print(f'Total number of data row in {dataset}: {numDataRow}')
 
     dfVal = df[0:numDataRowOfVal]
     dfTest = df[numDataRowOfVal:(numDataRowOfVal+numDataRowOfTest)]
@@ -281,11 +279,17 @@ def split_existed_to_train_val_test(rTrain, rVal, rTest, alpha, num_clients):
 
     # Split Training data into private client dataset
     # client_datasets, num_clients = split_existed_dataset_in_heterogeneity(dfTrain, alpha, num_clients, dirname)
-    splitCustomizedDataSet(dfTrain, alpha, num_clients)
+    splitCustomizedDataSet(dirname, dfTrain, alpha, num_clients)
 
     print("------------Done (split_train_val_test)------------")
 
-def splitCustomizedDataSet(df, alpha, num_clients):
+    # At the end of the script, restore stdout and close the file
+    sys.stdout = original
+    f.close()
+
+    return dirname
+
+def splitCustomizedDataSet(dirname, df, alpha, num_clients):
 
     start_time = time.time()
     os.system('cls||clear')
@@ -312,16 +316,25 @@ def splitCustomizedDataSet(df, alpha, num_clients):
     idxFY0Start = 0
 
     # number of element in array = number of client model
-    ratioMY1 = np.random.dirichlet([alpha] * num_clients)
-    ratioMY0 = np.random.dirichlet([alpha] * num_clients)
-    ratioFY1 = np.random.dirichlet([alpha] * num_clients)
-    ratioFY0 = np.random.dirichlet([alpha] * num_clients)
+    ratio = np.random.dirichlet([alpha] * np.ones(num_clients), 4)
+    print('ratio :')
+    print(ratio)
+
+    # ratioMY1 = np.random.dirichlet([alpha] * num_clients)
+    # ratioMY0 = np.random.dirichlet([alpha] * num_clients)
+    # ratioFY1 = np.random.dirichlet([alpha] * num_clients)
+    # ratioFY0 = np.random.dirichlet([alpha] * num_clients)
+
+    ratioMY1 = ratio[0]
+    ratioMY0 = ratio[1]
+    ratioFY1 = ratio[2]
+    ratioFY0 = ratio[3]
 
     lsRatio = list(zip(ratioMY1, ratioMY0, ratioFY1, ratioFY0))
 
-    print(f'Total number of data row in adult_clean.csv: {numDataRow}')
+    print(f'Total number of data row in dataset: {numDataRow}')
     print(f'Total number of clients datasets: {len(lsRatio)}')
-    print ('----------------(start splitting client datasets from adult_clean.csv)----------------')
+    print ('----------------(start splitting client datasets from adult_used.csv)----------------')
 
     for i in range(1, len(lsRatio)+1):
         idxMY1End = int(cntdfMY1*lsRatio[i-1][0])
@@ -347,6 +360,7 @@ def splitCustomizedDataSet(df, alpha, num_clients):
         idxFY1Start = idxFY1Start + idxFY1End
         idxFY0Start = idxFY0Start + idxFY0End
 
+        dfTrain = shuffle(dfTrain)
         dfTrain.to_csv(f'{dirname}\\training_data_client_{i}.csv', index=False)
         print(f'client {i} training data {dfTrain.shape}')
     
@@ -480,6 +494,3 @@ stddev_samples_per_client = 300
 
 ################################################
 
-# At the end of the script, restore stdout and close the file
-sys.stdout = original
-f.close()
