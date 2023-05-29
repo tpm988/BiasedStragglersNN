@@ -4,6 +4,7 @@ import helper
 import numpy as np
 import matplotlib.pyplot as plt
 plt.ion()
+# plt.ioff() 
 from matplotlib.ticker import MultipleLocator, FuncFormatter
 from sklearn.preprocessing import StandardScaler
 
@@ -44,6 +45,10 @@ def PlotClientDataDist(listClientInfo, plot_dir_path, todayTime, datatype):
     y_liY0inUnprivileged = []
     y_liCntMale = []
     y_liCntFemale = []
+    y_liCntY1inPrivileged = []
+    y_liCntY0inPrivileged = []
+    y_liCntY1inUnprivileged = []
+    y_liCntY0inUnprivileged = []
 
     # calculate data list for plot
     for i in range(1, cntClient + 1):
@@ -56,6 +61,12 @@ def PlotClientDataDist(listClientInfo, plot_dir_path, todayTime, datatype):
         totalPrivilegedY0 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 0)].shape[0]
         totalUnprivilegedY1 = df[(df['SensitiveAttr'] == 0) & (df['Label'] == 1)].shape[0]
         totalUnprivilegedY0 = df[(df['SensitiveAttr'] == 0) & (df['Label'] == 0)].shape[0]
+
+        # cnt
+        y_liCntY1inPrivileged.append(totalPrivilegedY1)
+        y_liCntY0inPrivileged.append(totalPrivilegedY0)
+        y_liCntY1inUnprivileged.append(totalUnprivilegedY1)
+        y_liCntY0inUnprivileged.append(totalUnprivilegedY0)
 
         # ratio (label/sensAttr)
         y_liY1inPrivileged.append(round(totalPrivilegedY1/totalCntPrivileged, 4))
@@ -83,7 +94,28 @@ def PlotClientDataDist(listClientInfo, plot_dir_path, todayTime, datatype):
     #####################################################
     # plot stacked bar chart
     ########## Plot 4 types dist ##########
-    # plt.figure(1)
+    # fig, ax = plt.subplots()
+    plt.bar(x, y_liCntY1inPrivileged, color='royalblue',label='Privileged, Y=1',width=bar_width)
+    plt.bar(x, y_liCntY0inPrivileged, color='lightskyblue', label='Privileged, Y=0',width=bar_width, bottom=np.array(y_liCntY1inPrivileged))
+    plt.bar(x, y_liCntY1inUnprivileged, color='hotpink', label='Unprivileged, Y=1',width=bar_width, bottom=np.array(y_liCntY1inPrivileged)+np.array(y_liCntY0inPrivileged))
+    plt.bar(x, y_liCntY0inUnprivileged, color='pink', label='Unprivileged, Y=0',width=bar_width, bottom=np.array(y_liCntY1inPrivileged)+np.array(y_liCntY0inPrivileged)+np.array(y_liCntY1inUnprivileged))
+    plt.xlabel('Client')
+    plt.ylabel('Count')
+    plt.title(f'Data distribution in {datatype} data')
+    legend = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+    ax.yaxis.set_major_locator(MultipleLocator(250))
+    # ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{x:.0f}'))
+   
+    plt.savefig(f'{plot_dir_path}\\data_dist_in_client_{datatype}_{todayTime}.png', dpi=300, bbox_extra_artists=(legend,), bbox_inches='tight')
+    # plt.show()
+    # plt.clf()
+    plt.close()
+
+    #####################################################
+    # plot stacked bar chart
+    ########## Plot 4 types dist ##########
+    fig, ax = plt.subplots()
     plt.bar(x, y_liPrivilegedY1, color='royalblue',label='Privileged, Y=1',width=bar_width)
     plt.bar(x, y_liPrivilegedY0, color='lightskyblue', label='Privileged, Y=0',width=bar_width, bottom=np.array(y_liPrivilegedY1))
     plt.bar(x, y_liUnprivilegedY1, color='hotpink', label='Unprivileged, Y=1',width=bar_width, bottom=np.array(y_liPrivilegedY1)+np.array(y_liPrivilegedY0))
@@ -105,7 +137,8 @@ def PlotClientDataDist(listClientInfo, plot_dir_path, todayTime, datatype):
             plt.text(x[i], y_liUnprivilegedY0[i] / 2 + y_liPrivilegedY1[i] + y_liPrivilegedY0[i] + y_liUnprivilegedY1[i], f'{y_liUnprivilegedY0[i]*100:.2f}', ha='center', va='bottom', fontsize=10)
         
     plt.savefig(f'{plot_dir_path}\\y_dist_in_client_{datatype}_{todayTime}.png', dpi=300, bbox_extra_artists=(legend,), bbox_inches='tight')
-    plt.show()
+    # plt.show()
+    plt.close()
 
     ########## Plot types dist in each sensitive attribute ##########   
     fig, ax = plt.subplots()
@@ -132,6 +165,7 @@ def PlotClientDataDist(listClientInfo, plot_dir_path, todayTime, datatype):
 
     plt.savefig(f'{plot_dir_path}\\y_dist_in_SensAttr_client_{datatype}_{todayTime}.png', dpi=300, bbox_extra_artists=(legend,), bbox_inches='tight')
     # plt.show()
+    plt.close()
 
     ########## Plot sensitive attribute dist ##########   
     fig, ax = plt.subplots()
@@ -159,7 +193,8 @@ def PlotClientDataDist(listClientInfo, plot_dir_path, todayTime, datatype):
 
     # plt.tight_layout()
     plt.savefig(f'{plot_dir_path}\\gender_amounts_in_client_{datatype}_{todayTime}.png', dpi=300, bbox_extra_artists=(legend,), bbox_inches='tight')
-    plt.show()
+    # plt.show()
+    plt.close()
 
 def PlotServerDataDist(df, plot_dir_path, todayTime, datatype):
     
@@ -189,7 +224,8 @@ def PlotServerDataDist(df, plot_dir_path, todayTime, datatype):
             fontsize='medium')
     
     plt.savefig(f'{plot_dir_path}\\y_dist_in_{datatype}_{todayTime}.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    # plt.show()
+    plt.close()
 
 
 
