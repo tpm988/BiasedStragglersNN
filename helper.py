@@ -40,12 +40,21 @@ def CreateResultFolder(dir_path, todayTime, strFedAlg):
 
     return dirname
 
-def CreateDatasetFolder(date):
+def CreateDatasetFolder(today_path, strFairMatric, run):
 
+    dirname = today_path + f'\\dataset_{strFairMatric}_run_{run}'
     # create dataset folder
-    if not os.path.exists(f'dataset_{date}'):
-        os.makedirs(f'dataset_{date}')
-    dirname = f'dataset_{date}'
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+
+    return dirname
+
+def CreateTodayFolder():
+    today = GetToday()
+    # create dataset folder
+    if not os.path.exists(f'today_{today}'):
+        os.makedirs(f'today_{today}')
+    dirname = f'today_{today}'
 
     return dirname
 

@@ -1,19 +1,48 @@
-import numpy as np
 import model as m
 import client as c
+#-----------------------
+import numpy as np
+import pandas as pd
+from sklearn.utils import shuffle
 
 ######(Aggregate global model coefficient)######
-def FedAvg(iterGlobal, cntFeature, dfClientModelCoefficient):
+def FairFateVC(listClientTrainUnfair):
 
-    totalNumData = dfClientModelCoefficient['numData'].sum()
-    aryGlobalCoef = []
-    fGlobalInterception = dfClientModelCoefficient['intercept'].dot(dfClientModelCoefficient['numData'] / totalNumData)
+    cntClient = len(listClientTrainUnfair)
+    listClientTrain = []
 
-    for i in range(1,cntFeature+1):
-        col = 'coef_x_%d' %i
-        aryGlobalCoef.append(dfClientModelCoefficient[col].dot(dfClientModelCoefficient['numData'] / totalNumData))
+    for i in range(cntClient):
+        df = listClientTrainUnfair[i]
+        if len(df) > 200:
+            dfSplit = ClientTrainSplit(df)
+            listClientTrain += dfSplit
+        else:
+            listClientTrain += df
+
+    return listClientTrain
+
+def ClientTrainSplit(df):
+    df_00 = df[(df['SensitiveAttr'] == 0) & (df['Label'] == 0)]
+    df_01 = df[(df['SensitiveAttr'] == 0) & (df['Label'] == 1)]
+    df_10 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 0)]
+    df_11 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 1)]
+
+    min_len = min(len(df_00), len(df_01), len(df_10), len(df_11))
+
+    # Check if can split: want len(df) >= 100
+    if min_len < 25:
+        return [df]
     
-    return aryGlobalCoef, fGlobalInterception
+    # Calculate select_len: want len(df) <= len(df)/2
+    select_len = min(min_len, int(len(df) / 8))
+
+    df1 = pd.concat([df_00[:select_len], df_01[:select_len], df_10[:select_len], df_11[:select_len]])
+    df2 = df.drop(df1.index)
+
+    df1 = shuffle(df1)
+    df2 = shuffle(df2)
+
+    return [df1, df2]
 
 
 def ModelEval(t, model, dfServerData):
@@ -31,7 +60,7 @@ def ModelEval(t, model, dfServerData):
 
     return Acc, df
 
-def calFairness(t, bIsClient, DataType, strFairMatric, model, dfServerData, dfRecordAccFair, F_Global = 0, cIdx=0, numData=0):
+def calFairness(t, bIsClient, DataType, strFairMatric, model, dfServerData, dfRecordAccFair, F_Global = 0, strPrivileged = 'Y', cIdx=0, numData=0):
 
     dfRecordAccFair.loc[len(dfRecordAccFair.index), 'iter'] = t
     idx = dfRecordAccFair[dfRecordAccFair['iter'] == t].index[-1]
@@ -41,15 +70,15 @@ def calFairness(t, bIsClient, DataType, strFairMatric, model, dfServerData, dfRe
 
     # evaluate fairness
     if strFairMatric == "SP":
-        fairness = m.calSP(df)
+        fairness, evaPrivileged = m.calSP(df, bIsClient, strPrivileged)
     elif strFairMatric == "EO":
-        fairness = m.calEO(df)
+        fairness, evaPrivileged = m.calEO(df, bIsClient, strPrivileged)
     elif strFairMatric == "EQO":
-        fairness = m.calEQO(df)
+        fairness, evaPrivileged = m.calEQO(df, bIsClient, strPrivileged)
 
     if bIsClient:
         print(f'client {cIdx} accuracy on {DataType}: %.6f' % (Acc))
-        print(f'client {cIdx} fairness({strFairMatric}) on {DataType}: %.6f' % (fairness))
+        print(f'client {cIdx} fairness({strFairMatric}, {strPrivileged}) on {DataType}: %.6f' % (fairness))
         dfRecordAccFair.at[idx, 'client'] = cIdx
         dfRecordAccFair.at[idx, 'numData'] = numData
         if fairness >= F_Global:
@@ -57,14 +86,16 @@ def calFairness(t, bIsClient, DataType, strFairMatric, model, dfServerData, dfRe
         else:
             dfRecordAccFair.at[idx, 'higher'] = "N"
         
-    else:
+    else: # global model
+        strPrivileged = evaPrivileged
         print(f'global model accuracy on {DataType}: %.6f' % (Acc))
-        print(f'global model fairness({strFairMatric}) on {DataType}: %.6f' % (fairness))
+        print(f'global model fairness({strFairMatric}, {strPrivileged}) on {DataType}: %.6f' % (fairness))
         dfRecordAccFair.at[idx, 'dataType'] = DataType
 
     dfRecordAccFair.at[idx, 'Acc'] = Acc
     dfRecordAccFair.at[idx, 'fairType'] = strFairMatric
     dfRecordAccFair.at[idx, 'fairValue'] = fairness
+    dfRecordAccFair.at[idx, 'Privileged'] = strPrivileged
 
     return dfRecordAccFair
 

@@ -19,7 +19,7 @@ os.system('cls||clear')
 def main(strFedAlg, beta0, rho, lr, lambda0, max, strFairMatric,
         listClientTrain, dfServerVal, dfServerTest,
         run, cntClient, intGlobalIteration, rSubsetClient,
-        bOutputExcel, todayTime, dir_path):
+        bOutputExcel, dir_path):
 
     # Momentum update
     v = 0
@@ -31,41 +31,31 @@ def main(strFedAlg, beta0, rho, lr, lambda0, max, strFairMatric,
     cntFeature = listClientTrain[0].shape[1] - 1
 
     # initialize a dataframe to store the client model results:
-    colClientAccFair = ['iter', 'client', 'numData', 'Acc', 'fairType', 'fairValue', 'higher']
+    colClientAccFair = ['iter', 'client', 'numData', 'Acc', 'fairType', 'fairValue', 'Privileged', 'higher']
     dfClientAccFair = pd.DataFrame(columns = colClientAccFair)
 
     # global model coefficient and client data accuracy record
-    colServerDataAccFair = ['iter', 'dataType', 'Acc', 'fairType', 'fairValue'] # dataType = ['test', 'val']
+    colServerDataAccFair = ['iter', 'dataType', 'Acc', 'fairType', 'fairValue', 'Privileged'] # dataType = ['test', 'val']
     dfServerDataAccFair = pd.DataFrame(columns = colServerDataAccFair)
 
     print (f'----------------(start running algorithm)----------------')
 
     # (t = 0): initial weights and biases
+    model, weights_h1, bias_h1, weights_out, bias_out = m.CreatModelNNInit(cntFeature, lr, run+1)
 
-    # weights_h1 = np.zeros((cntFeature, 10)) # for the first dense layer
-    # bias_h1 = np.zeros((10))
-    # weights_out = np.zeros((10, 1)) # for the second dense layer
-    # bias_out = np.zeros((1))
-    # weights_h1 = np.random.rand(cntFeature, 10) # for the first dense layer
-    # bias_h1 = np.random.rand(10)
-    # weights_out = np.random.rand(10, 1) # for the second dense layer
-    # bias_out = np.random.rand(1)
-    # model = m.CreatModelNNInit(cntFeature, weights_h1, bias_h1, weights_out, bias_out)
-
-    model, weights_h1, bias_h1, weights_out, bias_out = m.CreatModelNNInit(cntFeature, lr)
-
-    dfServerDataAccFair = s.calFairness(0, False, "val", strFairMatric, model, dfServerVal, dfServerDataAccFair, F_Global=0, cIdx=0, numData=0)
+    dfServerDataAccFair = s.calFairness(0, False, "val", strFairMatric, model, dfServerVal, dfServerDataAccFair, F_Global=0, strPrivileged='Y', cIdx=0, numData=0)
     F_Global = dfServerDataAccFair[(dfServerDataAccFair["iter"] == 0) & (dfServerDataAccFair["dataType"] == "val")].fairValue.values[0]
+    strPrivileged = dfServerDataAccFair[(dfServerDataAccFair["iter"] == 0) & (dfServerDataAccFair["dataType"] == "val")].Privileged.values[0]
 
     for t in range(1, intGlobalIteration + 1 ):
 
-        print(f"------------ run = {run+1}; t = {t}; F_Global = {F_Global} ------------")
+        print(f"------------ run = {run+1}; t = {t}; F_Global = {F_Global}, Privileged = {strPrivileged} ------------")
 
         # copy model for client used
         model_global = m.CloneModelNN(model, lr)
 
         # select subset of client
-        subsetOfClient = np.sort(np.random.choice(range(1, cntClient+1), size=int(cntClient*rSubsetClient), replace=False))
+        subsetOfClient = np.sort(np.random.choice(range(1, cntClient+1), size=round(cntClient*rSubsetClient), replace=False))
         client_HidCoef = []
         client_HidBias = []
         client_OutCoef = []
@@ -88,7 +78,7 @@ def main(strFedAlg, beta0, rho, lr, lambda0, max, strFairMatric,
                                                                         client_OutCoef, client_OutBias)
 
             # start record client model evaluation from iteration 1
-            dfClientAccFair = s.calFairness(t, True, "val", strFairMatric, model_client, dfServerVal, dfClientAccFair, F_Global, cIdx, numData)
+            dfClientAccFair = s.calFairness(t, True, "val", strFairMatric, model_client, dfServerVal, dfClientAccFair, F_Global, strPrivileged, cIdx, numData)
 
         # select subset of client with higher fairness
         dfClientAccFairTemp  = dfClientAccFair[dfClientAccFair["iter"] == t].reset_index(drop=True)
@@ -125,10 +115,24 @@ def main(strFedAlg, beta0, rho, lr, lambda0, max, strFairMatric,
 
         # calculate fairness on validation/testing set
         model = m.CreatModelNN(cntFeature, lr, weights_h1, bias_h1, weights_out, bias_out)
-        dfServerDataAccFair = s.calFairness(t, False, "val", strFairMatric, model, dfServerVal, dfServerDataAccFair, F_Global=0, cIdx=0, numData=0)
-        dfServerDataAccFair = s.calFairness(t, False, "test", strFairMatric, model, dfServerTest, dfServerDataAccFair, F_Global=0, cIdx=0, numData=0)
+        dfServerDataAccFair = s.calFairness(t, False, "val", strFairMatric, model, dfServerVal, dfServerDataAccFair, F_Global=0, strPrivileged='Y', cIdx=0, numData=0)
+        dfServerDataAccFair = s.calFairness(t, False, "test", strFairMatric, model, dfServerTest, dfServerDataAccFair, F_Global=0, strPrivileged='Y', cIdx=0, numData=0)
 
         F_Global = dfServerDataAccFair[(dfServerDataAccFair["iter"] == t) & (dfServerDataAccFair["dataType"] == "val")].fairValue.values[0]
+        strPrivileged = dfServerDataAccFair[(dfServerDataAccFair["iter"] == t) & (dfServerDataAccFair["dataType"] == "val")].Privileged.values[0]
+
+        # if (strFedAlg == 'FairFateVC'):
+        #     cIdxUnfair = np.setdiff1d(subsetOfClient, cIdxFair)
+        #     if len(cIdxUnfair) > 0:
+        #         # split virtual client dataset
+        #         listClientTrainUnfair = [listClientTrain[i-1] for i in cIdxUnfair]
+        #         for i in sorted(cIdxUnfair, reverse=True):
+        #             del listClientTrain[i-1]
+        #         listClientTrainUnfair = s.FairFateVC(listClientTrainUnfair)
+        #         # update listClientTrain & cntClient
+        #         listClientTrain += listClientTrainUnfair
+        #         cntClient = len(listClientTrain)
+            
 
     if bOutputExcel:
         dfClientAccFair.to_csv(f'{dir_path}\\dfClientAccFair_{strFedAlg}_f_{strFairMatric}_run_{run+1}_beta_{beta0}_rho_{rho}_lr_{lr}_lb0_{lambda0}_max_{max}.csv', index=False)
