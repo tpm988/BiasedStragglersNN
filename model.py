@@ -229,30 +229,50 @@ def calEQO(df, bIsClient, strPrivileged):
     else:
         FPUnprivileged = totalUnprivilegedY0PredictY1 / totalUnprivilegedY0
 
-    # TP + FP mean
-    probPrivileged = (TPPrivileged + FPPrivileged) / 2
-    probUnprivileged = (TPUnprivileged + FPUnprivileged) / 2
-
     if bIsClient:
-        if (strPrivileged == 'Y') and (probPrivileged > 0):
-            fairValue = round(probUnprivileged / probPrivileged, 4)
-            return fairValue, evaPrivileged
-        elif (strPrivileged == 'N') and (probUnprivileged > 0):
-            fairValue = round(probPrivileged / probUnprivileged, 4)
-            return fairValue, evaPrivileged
+        if (strPrivileged == 'Y'):
+            if TPPrivileged > 0:
+                TPRatio = TPUnprivileged / TPPrivileged
+            else:
+                TPRatio = 0
+
+            if FPPrivileged > 0:
+                FPRatio = FPUnprivileged / FPPrivileged
+            else:
+                FPRatio = 0
+
         else:
-            return fairValue, evaPrivileged
+            if TPUnprivileged > 0:
+                TPRatio = TPPrivileged / TPUnprivileged
+            else:
+                TPRatio = 0
+
+            if FPUnprivileged > 0:
+                FPRatio = FPPrivileged / FPUnprivileged
+            else:
+                FPRatio = 0
+
+        fairValue = round((TPRatio + FPRatio)/2, 4)
+        return fairValue, evaPrivileged
 
     else: # global model
-        if probUnprivileged > probPrivileged:
-            evaPrivileged = 'N'
-            fairValue = round(probPrivileged / probUnprivileged, 4)
-            return fairValue, evaPrivileged
-        elif probPrivileged > probUnprivileged:
-            fairValue = round(probUnprivileged / probPrivileged, 4)
-            return fairValue, evaPrivileged
+        if TPPrivileged > 0:
+            TPRatio = TPUnprivileged / TPPrivileged
         else:
-            return fairValue, evaPrivileged
+            TPRatio = 0
+
+        if FPPrivileged > 0:
+            FPRatio = FPUnprivileged / FPPrivileged
+        else:
+            FPRatio = 0
+
+        fairValue = (TPRatio + FPRatio)/2
+
+        if fairValue > 1:
+            evaPrivileged = 'N'
+            fairValue = 1/fairValue
+
+        return round(fairValue, 4), evaPrivileged
 
 def calAcc(df):
     
