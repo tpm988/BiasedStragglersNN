@@ -70,12 +70,12 @@ todayTime = helper.GetTodayTime()
 rTrain = 0.6
 rVal = 0.2
 rTest = 0.2
-alpha = 0.5
+alpha = 2 # [0.5, 2]
 num_clients = 10
 
 ####################(Initialized Alg setting)########################
-strFedAlg = "FairFate" # [FairFate, FairFateVC]
-intRun = 2
+strFedAlg = "FairFateVC" # [FairFate, FairFateVC]
+intRun = 10
 intGlobalIteration = 50
 rSubsetClient = 0.3
 METRICS_values = ['SP', 'EO', 'EQO'] # ['EO'] # ['SP', 'EO', 'EQO']
@@ -104,7 +104,8 @@ dfAccResult = pd.DataFrame()
 for strFairMatric in METRICS_values:
     fairnessCollection = np.zeros((1, intGlobalIteration))
     accCollection = np.zeros((1, intGlobalIteration))
-    n = 0    
+
+    n = 0
     for beta0 in beta0_values:
         for rho in rho_values:
             for lr in lr_values:
@@ -116,7 +117,7 @@ for strFairMatric in METRICS_values:
                                 # re-create data set
                                 dir_path = dataset.split_existed_to_train_val_test(today_path, strFairMatric, run, rTrain, rVal, rTest, alpha, num_clients)
                             else:
-                                dir_path = '' # 'today_20230529\\dataset_EQO_run_0'
+                                dir_path = 'today_20230530\\dataset_SP_run_0' # 'today_20230530\\dataset_SP_run_0'
 
                             result_dir_path = helper.CreateResultFolder(dir_path, todayTime, strFedAlg)
 
@@ -133,7 +134,7 @@ for strFairMatric in METRICS_values:
                                 plotInfo(plot_dir_path, bPlotClientTrainInfo, bPlotTestValInfo, listClientTrain, dfServerVal, dfServerTest)
 
                             # run alg.
-                            n += 1              
+                            n += 1         
                             fairnessResult, accResult = FLAlgMain.main(strFedAlg, beta0, rho, lr, lambda0, max, strFairMatric,
                                         listClientTrain, dfServerVal, dfServerTest,
                                         run, cntClient, intGlobalIteration, rSubsetClient,

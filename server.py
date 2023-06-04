@@ -17,7 +17,7 @@ def FairFateVC(listClientTrainUnfair):
             dfSplit = ClientTrainSplit(df)
             listClientTrain += dfSplit
         else:
-            listClientTrain += df
+            listClientTrain += [df]
 
     return listClientTrain
 

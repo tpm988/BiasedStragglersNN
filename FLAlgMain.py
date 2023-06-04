@@ -3,9 +3,11 @@ import os.path
 import pandas as pd
 import numpy as np
 import warnings
+# from datetime import datetime
 #-----------------------
 import server as s
 import model as m
+# import client
 #-----------------------
 from sklearn.exceptions import ConvergenceWarning
 
@@ -121,17 +123,33 @@ def main(strFedAlg, beta0, rho, lr, lambda0, max, strFairMatric,
         F_Global = dfServerDataAccFair[(dfServerDataAccFair["iter"] == t) & (dfServerDataAccFair["dataType"] == "val")].fairValue.values[0]
         strPrivileged = dfServerDataAccFair[(dfServerDataAccFair["iter"] == t) & (dfServerDataAccFair["dataType"] == "val")].Privileged.values[0]
 
-        # if (strFedAlg == 'FairFateVC'):
-        #     cIdxUnfair = np.setdiff1d(subsetOfClient, cIdxFair)
-        #     if len(cIdxUnfair) > 0:
-        #         # split virtual client dataset
-        #         listClientTrainUnfair = [listClientTrain[i-1] for i in cIdxUnfair]
-        #         for i in sorted(cIdxUnfair, reverse=True):
-        #             del listClientTrain[i-1]
-        #         listClientTrainUnfair = s.FairFateVC(listClientTrainUnfair)
-        #         # update listClientTrain & cntClient
-        #         listClientTrain += listClientTrainUnfair
-        #         cntClient = len(listClientTrain)
+        if (strFedAlg == 'FairFateVC'):
+            cIdxUnfair = np.setdiff1d(subsetOfClient, cIdxFair)
+            if len(cIdxUnfair) > 0:
+                # split virtual client dataset
+                listClientTrainUnfair = [listClientTrain[i-1] for i in cIdxUnfair]
+                for i in sorted(cIdxUnfair, reverse=True):
+                    del listClientTrain[i-1]
+                listClientTrainUnfair = s.FairFateVC(listClientTrainUnfair)
+                # update listClientTrain & cntClient
+                listClientTrain += listClientTrainUnfair
+                cntClient = len(listClientTrain)
+
+            # if round(cntClient*rSubsetClient) == 6:
+            #     plotMore = False
+            #     if plotMore == True:
+            #         plotMore = False
+            #         listClientTrainInfo = [df[['SensitiveAttr', 'Label']] for df in listClientTrain]
+            #         todayTime = datetime.now().strftime("%Y%m%d %H.%M.%S")
+            #         client.PlotClientDataDist(listClientTrainInfo, dir_path, todayTime, "training")
+
+            # if round(cntClient*rSubsetClient) = 7:
+            #     plotMore = False
+            #     if plotMore == True:
+            #         plotMore = False
+            #         listClientTrainInfo = [df[['SensitiveAttr', 'Label']] for df in listClientTrain]
+            #         todayTime = datetime.now().strftime("%Y%m%d %H.%M.%S")
+            #         client.PlotClientDataDist(listClientTrainInfo, dir_path, todayTime, "training")      
             
 
     if bOutputExcel:

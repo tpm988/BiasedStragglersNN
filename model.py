@@ -84,8 +84,8 @@ def train_NN_SGD(iterGlobal, idxClient, dfClientData, model, lr, client_HidCoef,
 
     model = ModelCompile(model, lr)
 
-    # Train the model
-    history = model.fit(x_train, y_train, batch_size=32, epochs=10, verbose=0) # , validation_data=(x_val, y_val)
+    # Train the model # batch_size=32
+    history = model.fit(x_train, y_train, batch_size=10, epochs=10, verbose=0) # , validation_data=(x_val, y_val)
 
     # Get the accuracy
     acc_train = history.history['accuracy'][-1]
