@@ -297,7 +297,8 @@ def splitCustomizedDataSet(dirname, df, alpha, num_clients):
     random_seed = 5
 
     # df = pd.read_csv(f'{dirname}\\training_data.csv', index_col=False) # total: 45201
-    df = df.sample(frac=1, random_state = 46).reset_index(drop=True)   
+    # df = df.sample(frac=1, random_state = 46).reset_index(drop=True)
+    df = shuffle(df) 
     numDataRow = df.shape[0]
 
     dfMY1 = df[(df['SensitiveAttr'] == 1) & (df['Label'] == 1)]
