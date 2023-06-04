@@ -1,0 +1,978 @@
+Alg.: FairFateVC; Client dataset: today_20230531\dataset_SP_run_4; client Count: 10
+----------------(start loading 10 client datasets from today_20230531\dataset_SP_run_4)----------------
+----------------(successfully loading 10 client datasets and server testing data from today_20230531\dataset_SP_run_4)----------------
+----------------Execute (FLAlgMain)----------------
+----------------(start running algorithm)----------------
+global model accuracy on val: 0.466939
+global model fairness(SP, N) on val: 0.861400
+------------ run = 5; t = 1; F_Global = 0.8614, Privileged = N ------------
+training accuracy (client 1) : 0.975646 
+client 1 accuracy on val: 0.890118
+client 1 fairness(SP, N) on val: 1.000000
+training accuracy (client 5) : 0.929609 
+client 5 accuracy on val: 0.884107
+client 5 fairness(SP, N) on val: 1.517800
+training accuracy (client 6) : 0.636656 
+client 6 accuracy on val: 0.670353
+client 6 fairness(SP, N) on val: 1.024400
+global model accuracy on val: 0.854532
+global model fairness(SP, Y) on val: 0.899800
+global model accuracy on test: 0.857177
+global model fairness(SP, Y) on test: 0.893700
+------------ run = 5; t = 2; F_Global = 0.8998, Privileged = Y ------------
+training accuracy (client 2) : 0.931931 
+client 2 accuracy on val: 0.892763
+client 2 fairness(SP, Y) on val: 0.980900
+training accuracy (client 7) : 0.871589 
+client 7 accuracy on val: 0.893965
+client 7 fairness(SP, Y) on val: 0.778100
+training accuracy (client 9) : 0.919700 
+client 9 accuracy on val: 0.894205
+client 9 fairness(SP, Y) on val: 0.954500
+global model accuracy on val: 0.892041
+global model fairness(SP, Y) on val: 0.931200
+global model accuracy on test: 0.888916
+global model fairness(SP, Y) on test: 0.917400
+------------ run = 5; t = 3; F_Global = 0.9312, Privileged = Y ------------
+training accuracy (client 4) : 0.796074 
+client 4 accuracy on val: 0.822794
+client 4 fairness(SP, Y) on val: 0.809800
+training accuracy (client 6) : 0.733119 
+client 6 accuracy on val: 0.884828
+client 6 fairness(SP, Y) on val: 0.876900
+training accuracy (client 7) : 0.758750 
+client 7 accuracy on val: 0.867997
+client 7 fairness(SP, Y) on val: 0.615300
+global model accuracy on val: 0.894927
+global model fairness(SP, Y) on val: 0.808800
+global model accuracy on test: 0.889156
+global model fairness(SP, Y) on test: 0.797000
+------------ run = 5; t = 4; F_Global = 0.8088, Privileged = Y ------------
+training accuracy (client 1) : 0.976548 
+client 1 accuracy on val: 0.890118
+client 1 fairness(SP, Y) on val: 1.000000
+training accuracy (client 2) : 0.932549 
+client 2 accuracy on val: 0.892522
+client 2 fairness(SP, Y) on val: 0.976500
+training accuracy (client 5) : 0.923983 
+client 5 accuracy on val: 0.893244
+client 5 fairness(SP, Y) on val: 0.960400
+training accuracy (client 12) : 0.644231 
+client 12 accuracy on val: 0.789372
+client 12 fairness(SP, Y) on val: 0.660400
+global model accuracy on val: 0.895167
+global model fairness(SP, Y) on val: 0.925200
+global model accuracy on test: 0.895408
+global model fairness(SP, Y) on test: 0.906800
+------------ run = 5; t = 5; F_Global = 0.9252, Privileged = Y ------------
+training accuracy (client 5) : 0.923983 
+client 5 accuracy on val: 0.895888
+client 5 fairness(SP, Y) on val: 0.929600
+training accuracy (client 6) : 0.886224 
+client 6 accuracy on val: 0.905747
+client 6 fairness(SP, Y) on val: 0.796400
+training accuracy (client 7) : 0.566667 
+client 7 accuracy on val: 0.891080
+client 7 fairness(SP, Y) on val: 0.680100
+training accuracy (client 9) : 0.619318 
+client 9 accuracy on val: 0.861265
+client 9 fairness(SP, Y) on val: 0.618800
+global model accuracy on val: 0.898052
+global model fairness(SP, Y) on val: 0.881200
+global model accuracy on test: 0.895648
+global model fairness(SP, Y) on test: 0.863800
+------------ run = 5; t = 6; F_Global = 0.8812, Privileged = Y ------------
+training accuracy (client 2) : 0.933787 
+client 2 accuracy on val: 0.893244
+client 2 fairness(SP, Y) on val: 0.963300
+training accuracy (client 6) : 0.960239 
+client 6 accuracy on val: 0.890358
+client 6 fairness(SP, Y) on val: 0.998500
+training accuracy (client 8) : 0.762058 
+client 8 accuracy on val: 0.880500
+client 8 fairness(SP, Y) on val: 0.875400
+training accuracy (client 10) : 0.589744 
+client 10 accuracy on val: 0.879057
+client 10 fairness(SP, Y) on val: 0.657900
+global model accuracy on val: 0.895408
+global model fairness(SP, Y) on val: 0.926700
+global model accuracy on test: 0.897091
+global model fairness(SP, Y) on test: 0.918000
+------------ run = 5; t = 7; F_Global = 0.9267, Privileged = Y ------------
+training accuracy (client 5) : 0.925054 
+client 5 accuracy on val: 0.896850
+client 5 fairness(SP, Y) on val: 0.931400
+training accuracy (client 9) : 0.564103 
+client 9 accuracy on val: 0.886992
+client 9 fairness(SP, Y) on val: 0.678700
+training accuracy (client 10) : 0.655488 
+client 10 accuracy on val: 0.802356
+client 10 fairness(SP, Y) on val: 0.639300
+training accuracy (client 11) : 0.956997 
+client 11 accuracy on val: 0.890118
+client 11 fairness(SP, Y) on val: 1.000000
+global model accuracy on val: 0.893965
+global model fairness(SP, Y) on val: 0.953100
+global model accuracy on test: 0.894205
+global model fairness(SP, Y) on test: 0.949300
+------------ run = 5; t = 8; F_Global = 0.9531, Privileged = Y ------------
+training accuracy (client 2) : 0.933787 
+client 2 accuracy on val: 0.893965
+client 2 fairness(SP, Y) on val: 0.956000
+training accuracy (client 3) : 0.912253 
+client 3 accuracy on val: 0.899255
+client 3 fairness(SP, Y) on val: 0.633400
+training accuracy (client 5) : 0.923983 
+client 5 accuracy on val: 0.895408
+client 5 fairness(SP, Y) on val: 0.940200
+training accuracy (client 13) : 0.576923 
+client 13 accuracy on val: 0.882424
+client 13 fairness(SP, Y) on val: 0.715800
+training accuracy (client 16) : 0.573171 
+client 16 accuracy on val: 0.848040
+client 16 fairness(SP, Y) on val: 0.685700
+global model accuracy on val: 0.895888
+global model fairness(SP, Y) on val: 0.929600
+global model accuracy on test: 0.896610
+global model fairness(SP, Y) on test: 0.912900
+------------ run = 5; t = 9; F_Global = 0.9296, Privileged = Y ------------
+training accuracy (client 1) : 0.976849 
+client 1 accuracy on val: 0.890358
+client 1 fairness(SP, Y) on val: 0.998500
+training accuracy (client 5) : 0.836707 
+client 5 accuracy on val: 0.849964
+client 5 fairness(SP, Y) on val: 0.959800
+training accuracy (client 7) : 0.956997 
+client 7 accuracy on val: 0.890118
+client 7 fairness(SP, Y) on val: 1.000000
+training accuracy (client 12) : 0.615854 
+client 12 accuracy on val: 0.858860
+client 12 fairness(SP, Y) on val: 0.659400
+training accuracy (client 17) : 0.567073 
+client 17 accuracy on val: 0.853090
+client 17 fairness(SP, Y) on val: 0.672900
+global model accuracy on val: 0.893484
+global model fairness(SP, Y) on val: 0.956000
+global model accuracy on test: 0.894205
+global model fairness(SP, Y) on test: 0.950600
+------------ run = 5; t = 10; F_Global = 0.956, Privileged = Y ------------
+training accuracy (client 1) : 0.975947 
+client 1 accuracy on val: 0.890839
+client 1 fairness(SP, Y) on val: 0.995600
+training accuracy (client 12) : 0.617021 
+client 12 accuracy on val: 0.860063
+client 12 fairness(SP, Y) on val: 0.661300
+training accuracy (client 13) : 0.951718 
+client 13 accuracy on val: 0.901178
+client 13 fairness(SP, Y) on val: 0.768300
+training accuracy (client 16) : 0.615854 
+client 16 accuracy on val: 0.864390
+client 16 fairness(SP, Y) on val: 0.658400
+training accuracy (client 17) : 0.567073 
+client 17 accuracy on val: 0.860784
+client 17 fairness(SP, Y) on val: 0.677900
+global model accuracy on val: 0.893003
+global model fairness(SP, Y) on val: 0.961900
+global model accuracy on test: 0.892763
+global model fairness(SP, Y) on test: 0.963400
+------------ run = 5; t = 11; F_Global = 0.9619, Privileged = Y ------------
+training accuracy (client 6) : 0.870902 
+client 6 accuracy on val: 0.902140
+client 6 fairness(SP, Y) on val: 0.690300
+training accuracy (client 8) : 0.550000 
+client 8 accuracy on val: 0.898052
+client 8 fairness(SP, Y) on val: 0.678200
+training accuracy (client 12) : 0.922912 
+client 12 accuracy on val: 0.898774
+client 12 fairness(SP, Y) on val: 0.889100
+training accuracy (client 14) : 0.617021 
+client 14 accuracy on val: 0.867997
+client 14 fairness(SP, Y) on val: 0.627400
+training accuracy (client 17) : 0.567073 
+client 17 accuracy on val: 0.876172
+client 17 fairness(SP, Y) on val: 0.641300
+global model accuracy on val: 0.895408
+global model fairness(SP, Y) on val: 0.932600
+global model accuracy on test: 0.895408
+global model fairness(SP, Y) on test: 0.917200
+------------ run = 5; t = 12; F_Global = 0.9326, Privileged = Y ------------
+training accuracy (client 1) : 0.976548 
+client 1 accuracy on val: 0.891080
+client 1 fairness(SP, Y) on val: 0.994100
+training accuracy (client 10) : 0.576923 
+client 10 accuracy on val: 0.886752
+client 10 fairness(SP, Y) on val: 0.641400
+training accuracy (client 14) : 0.550000 
+client 14 accuracy on val: 0.894205
+client 14 fairness(SP, Y) on val: 0.655700
+training accuracy (client 16) : 0.622340 
+client 16 accuracy on val: 0.861505
+client 16 fairness(SP, Y) on val: 0.619900
+training accuracy (client 17) : 0.567073 
+client 17 accuracy on val: 0.864390
+client 17 fairness(SP, Y) on val: 0.641300
+global model accuracy on val: 0.893244
+global model fairness(SP, Y) on val: 0.954500
+global model accuracy on test: 0.894686
+global model fairness(SP, Y) on test: 0.944300
+------------ run = 5; t = 13; F_Global = 0.9545, Privileged = Y ------------
+training accuracy (client 1) : 0.976548 
+client 1 accuracy on val: 0.891080
+client 1 fairness(SP, Y) on val: 0.994100
+training accuracy (client 6) : 0.956997 
+client 6 accuracy on val: 0.890599
+client 6 fairness(SP, Y) on val: 0.997100
+training accuracy (client 9) : 0.538462 
+client 9 accuracy on val: 0.894446
+client 9 fairness(SP, Y) on val: 0.626200
+training accuracy (client 10) : 0.952646 
+client 10 accuracy on val: 0.901900
+client 10 fairness(SP, Y) on val: 0.746300
+training accuracy (client 17) : 0.567073 
+client 17 accuracy on val: 0.876413
+client 17 fairness(SP, Y) on val: 0.611700
+global model accuracy on val: 0.892522
+global model fairness(SP, Y) on val: 0.964800
+global model accuracy on test: 0.892522
+global model fairness(SP, Y) on test: 0.968200
+------------ run = 5; t = 14; F_Global = 0.9648, Privileged = Y ------------
+training accuracy (client 2) : 0.933787 
+client 2 accuracy on val: 0.898052
+client 2 fairness(SP, Y) on val: 0.913500
+training accuracy (client 4) : 0.960239 
+client 4 accuracy on val: 0.890599
+client 4 fairness(SP, Y) on val: 0.997100
+training accuracy (client 8) : 0.739550 
+client 8 accuracy on val: 0.894446
+client 8 fairness(SP, Y) on val: 0.848100
+training accuracy (client 12) : 0.564103 
+client 12 accuracy on val: 0.891801
+client 12 fairness(SP, Y) on val: 0.630600
+training accuracy (client 17) : 0.567073 
+client 17 accuracy on val: 0.872806
+client 17 fairness(SP, Y) on val: 0.612900
+global model accuracy on val: 0.892522
+global model fairness(SP, Y) on val: 0.964800
+global model accuracy on test: 0.892522
+global model fairness(SP, Y) on test: 0.968200
+------------ run = 5; t = 15; F_Global = 0.9648, Privileged = Y ------------
+training accuracy (client 2) : 0.944134 
+client 2 accuracy on val: 0.901900
+client 2 fairness(SP, Y) on val: 0.749300
+training accuracy (client 7) : 0.621951 
+client 7 accuracy on val: 0.869680
+client 7 fairness(SP, Y) on val: 0.622800
+training accuracy (client 12) : 0.544872 
+client 12 accuracy on val: 0.894927
+client 12 fairness(SP, Y) on val: 0.640500
+training accuracy (client 13) : 0.951718 
+client 13 accuracy on val: 0.902380
+client 13 fairness(SP, Y) on val: 0.734600
+training accuracy (client 16) : 0.570513 
+client 16 accuracy on val: 0.889637
+client 16 fairness(SP, Y) on val: 0.641500
+global model accuracy on val: 0.893724
+global model fairness(SP, Y) on val: 0.951600
+global model accuracy on test: 0.894686
+global model fairness(SP, Y) on test: 0.944300
+------------ run = 5; t = 16; F_Global = 0.9516, Privileged = Y ------------
+training accuracy (client 8) : 0.550000 
+client 8 accuracy on val: 0.898052
+client 8 fairness(SP, Y) on val: 0.653400
+training accuracy (client 10) : 0.934406 
+client 10 accuracy on val: 0.897331
+client 10 fairness(SP, Y) on val: 0.915000
+training accuracy (client 11) : 0.742765 
+client 11 accuracy on val: 0.892041
+client 11 fairness(SP, Y) on val: 0.852100
+training accuracy (client 13) : 0.943017 
+client 13 accuracy on val: 0.901900
+client 13 fairness(SP, Y) on val: 0.749300
+training accuracy (client 15) : 0.544872 
+client 15 accuracy on val: 0.892041
+client 15 fairness(SP, Y) on val: 0.630200
+global model accuracy on val: 0.893965
+global model fairness(SP, Y) on val: 0.950100
+global model accuracy on test: 0.895648
+global model fairness(SP, Y) on test: 0.934700
+------------ run = 5; t = 17; F_Global = 0.9501, Privileged = Y ------------
+training accuracy (client 5) : 0.630682 
+client 5 accuracy on val: 0.866314
+client 5 fairness(SP, Y) on val: 0.591900
+training accuracy (client 6) : 0.875000 
+client 6 accuracy on val: 0.901419
+client 6 fairness(SP, Y) on val: 0.685500
+training accuracy (client 8) : 0.617021 
+client 8 accuracy on val: 0.865112
+client 8 fairness(SP, Y) on val: 0.609500
+training accuracy (client 10) : 0.609756 
+client 10 accuracy on val: 0.869921
+client 10 fairness(SP, Y) on val: 0.589800
+training accuracy (client 14) : 0.934406 
+client 14 accuracy on val: 0.898533
+client 14 fairness(SP, Y) on val: 0.909400
+global model accuracy on val: 0.895408
+global model fairness(SP, Y) on val: 0.935500
+global model accuracy on test: 0.895648
+global model fairness(SP, Y) on test: 0.918800
+------------ run = 5; t = 18; F_Global = 0.9355, Privileged = Y ------------
+training accuracy (client 1) : 0.976548 
+client 1 accuracy on val: 0.891560
+client 1 fairness(SP, Y) on val: 0.991200
+training accuracy (client 7) : 0.954503 
+client 7 accuracy on val: 0.902380
+client 7 fairness(SP, Y) on val: 0.737500
+training accuracy (client 8) : 0.576923 
+client 8 accuracy on val: 0.887232
+client 8 fairness(SP, Y) on val: 0.635100
+training accuracy (client 13) : 0.619318 
+client 13 accuracy on val: 0.867997
+client 13 fairness(SP, Y) on val: 0.597400
+training accuracy (client 15) : 0.622340 
+client 15 accuracy on val: 0.862467
+client 15 fairness(SP, Y) on val: 0.607000
+global model accuracy on val: 0.893965
+global model fairness(SP, Y) on val: 0.950100
+global model accuracy on test: 0.895648
+global model fairness(SP, Y) on test: 0.934700
+------------ run = 5; t = 19; F_Global = 0.9501, Privileged = Y ------------
+training accuracy (client 1) : 0.976548 
+client 1 accuracy on val: 0.891560
+client 1 fairness(SP, Y) on val: 0.991200
+training accuracy (client 3) : 0.834008 
+client 3 accuracy on val: 0.854051
+client 3 fairness(SP, Y) on val: 0.915800
+training accuracy (client 9) : 0.943017 
+client 9 accuracy on val: 0.902140
+client 9 fairness(SP, Y) on val: 0.741900
+training accuracy (client 11) : 0.875000 
+client 11 accuracy on val: 0.901178
+client 11 fairness(SP, Y) on val: 0.664800
+training accuracy (client 14) : 0.954503 
+client 14 accuracy on val: 0.901900
+client 14 fairness(SP, Y) on val: 0.731700
+global model accuracy on val: 0.893484
+global model fairness(SP, Y) on val: 0.953100
+global model accuracy on test: 0.894927
+global model fairness(SP, Y) on test: 0.942700
+------------ run = 5; t = 20; F_Global = 0.9531, Privileged = Y ------------
+training accuracy (client 3) : 0.956997 
+client 3 accuracy on val: 0.890839
+client 3 fairness(SP, Y) on val: 0.995600
+training accuracy (client 8) : 0.538462 
+client 8 accuracy on val: 0.895648
+client 8 fairness(SP, Y) on val: 0.610900
+training accuracy (client 9) : 0.615854 
+client 9 accuracy on val: 0.874008
+client 9 fairness(SP, Y) on val: 0.584200
+training accuracy (client 10) : 0.935025 
+client 10 accuracy on val: 0.899255
+client 10 fairness(SP, Y) on val: 0.896200
+training accuracy (client 14) : 0.828610 
+client 14 accuracy on val: 0.856215
+client 14 fairness(SP, Y) on val: 0.919700
+global model accuracy on val: 0.892763
+global model fairness(SP, Y) on val: 0.960400
+global model accuracy on test: 0.893244
+global model fairness(SP, Y) on test: 0.957000
+------------ run = 5; t = 21; F_Global = 0.9604, Privileged = Y ------------
+training accuracy (client 7) : 0.742765 
+client 7 accuracy on val: 0.891080
+client 7 fairness(SP, Y) on val: 0.858400
+training accuracy (client 11) : 0.944134 
+client 11 accuracy on val: 0.902140
+client 11 fairness(SP, Y) on val: 0.750700
+training accuracy (client 15) : 0.609756 
+client 15 accuracy on val: 0.867516
+client 15 fairness(SP, Y) on val: 0.581300
+training accuracy (client 16) : 0.934406 
+client 16 accuracy on val: 0.899014
+client 16 fairness(SP, Y) on val: 0.901100
+training accuracy (client 17) : 0.832659 
+client 17 accuracy on val: 0.859101
+client 17 fairness(SP, Y) on val: 0.938600
+global model accuracy on val: 0.893484
+global model fairness(SP, Y) on val: 0.953100
+global model accuracy on test: 0.894927
+global model fairness(SP, Y) on test: 0.945900
+------------ run = 5; t = 22; F_Global = 0.9531, Privileged = Y ------------
+training accuracy (client 6) : 0.550000 
+client 6 accuracy on val: 0.897331
+client 6 fairness(SP, Y) on val: 0.663600
+training accuracy (client 10) : 0.875000 
+client 10 accuracy on val: 0.900938
+client 10 fairness(SP, Y) on val: 0.685500
+training accuracy (client 13) : 0.752412 
+client 13 accuracy on val: 0.887954
+client 13 fairness(SP, Y) on val: 0.861600
+training accuracy (client 14) : 0.944134 
+client 14 accuracy on val: 0.901659
+client 14 fairness(SP, Y) on val: 0.747800
+training accuracy (client 16) : 0.935025 
+client 16 accuracy on val: 0.898774
+client 16 fairness(SP, Y) on val: 0.902500
+global model accuracy on val: 0.894446
+global model fairness(SP, Y) on val: 0.947200
+global model accuracy on test: 0.895167
+global model fairness(SP, Y) on test: 0.934700
+------------ run = 5; t = 23; F_Global = 0.9472, Privileged = Y ------------
+training accuracy (client 1) : 0.976849 
+client 1 accuracy on val: 0.891560
+client 1 fairness(SP, Y) on val: 0.991200
+training accuracy (client 4) : 0.925054 
+client 4 accuracy on val: 0.900697
+client 4 fairness(SP, Y) on val: 0.874700
+training accuracy (client 5) : 0.567073 
+client 5 accuracy on val: 0.869680
+client 5 fairness(SP, Y) on val: 0.642700
+training accuracy (client 11) : 0.621951 
+client 11 accuracy on val: 0.866795
+client 11 fairness(SP, Y) on val: 0.624700
+training accuracy (client 13) : 0.550000 
+client 13 accuracy on val: 0.896129
+client 13 fairness(SP, Y) on val: 0.656800
+global model accuracy on val: 0.893484
+global model fairness(SP, Y) on val: 0.953100
+global model accuracy on test: 0.894686
+global model fairness(SP, Y) on test: 0.947500
+------------ run = 5; t = 24; F_Global = 0.9531, Privileged = Y ------------
+training accuracy (client 3) : 0.956997 
+client 3 accuracy on val: 0.891080
+client 3 fairness(SP, Y) on val: 0.994100
+training accuracy (client 5) : 0.613636 
+client 5 accuracy on val: 0.870161
+client 5 fairness(SP, Y) on val: 0.593900
+training accuracy (client 9) : 0.835358 
+client 9 accuracy on val: 0.857177
+client 9 fairness(SP, Y) on val: 0.929000
+training accuracy (client 11) : 0.745981 
+client 11 accuracy on val: 0.890839
+client 11 fairness(SP, Y) on val: 0.848700
+training accuracy (client 15) : 0.567073 
+client 15 accuracy on val: 0.871604
+client 15 fairness(SP, Y) on val: 0.619000
+global model accuracy on val: 0.893244
+global model fairness(SP, Y) on val: 0.960400
+global model accuracy on test: 0.893003
+global model fairness(SP, Y) on test: 0.965000
+------------ run = 5; t = 25; F_Global = 0.9604, Privileged = Y ------------
+training accuracy (client 1) : 0.976849 
+client 1 accuracy on val: 0.892522
+client 1 fairness(SP, Y) on val: 0.985300
+training accuracy (client 6) : 0.954503 
+client 6 accuracy on val: 0.902140
+client 6 fairness(SP, Y) on val: 0.741900
+training accuracy (client 8) : 0.877049 
+client 8 accuracy on val: 0.902380
+client 8 fairness(SP, Y) on val: 0.712300
+training accuracy (client 13) : 0.550000 
+client 13 accuracy on val: 0.895888
+client 13 fairness(SP, Y) on val: 0.687000
+training accuracy (client 14) : 0.607955 
+client 14 accuracy on val: 0.866795
+client 14 fairness(SP, Y) on val: 0.637100
+global model accuracy on val: 0.892522
+global model fairness(SP, Y) on val: 0.964800
+global model accuracy on test: 0.892763
+global model fairness(SP, Y) on test: 0.966600
+------------ run = 5; t = 26; F_Global = 0.9648, Privileged = Y ------------
+training accuracy (client 4) : 0.570513 
+client 4 accuracy on val: 0.888675
+client 4 fairness(SP, Y) on val: 0.642500
+training accuracy (client 5) : 0.617021 
+client 5 accuracy on val: 0.866795
+client 5 fairness(SP, Y) on val: 0.611400
+training accuracy (client 8) : 0.935644 
+client 8 accuracy on val: 0.899255
+client 8 fairness(SP, Y) on val: 0.893700
+training accuracy (client 9) : 0.926124 
+client 9 accuracy on val: 0.901659
+client 9 fairness(SP, Y) on val: 0.871800
+training accuracy (client 16) : 0.550000 
+client 16 accuracy on val: 0.899255
+client 16 fairness(SP, Y) on val: 0.666500
+global model accuracy on val: 0.893244
+global model fairness(SP, Y) on val: 0.957500
+global model accuracy on test: 0.893244
+global model fairness(SP, Y) on test: 0.957000
+------------ run = 5; t = 27; F_Global = 0.9575, Privileged = Y ------------
+training accuracy (client 1) : 0.976849 
+client 1 accuracy on val: 0.892522
+client 1 fairness(SP, Y) on val: 0.985300
+training accuracy (client 2) : 0.960239 
+client 2 accuracy on val: 0.891320
+client 2 fairness(SP, Y) on val: 0.992700
+training accuracy (client 3) : 0.956997 
+client 3 accuracy on val: 0.890839
+client 3 fairness(SP, Y) on val: 0.995600
+training accuracy (client 6) : 0.621951 
+client 6 accuracy on val: 0.862226
+client 6 fairness(SP, Y) on val: 0.596000
+training accuracy (client 11) : 0.883197 
+client 11 accuracy on val: 0.901900
+client 11 fairness(SP, Y) on val: 0.680000
+global model accuracy on val: 0.892041
+global model fairness(SP, Y) on val: 0.967700
+global model accuracy on test: 0.892763
+global model fairness(SP, Y) on test: 0.969700
+------------ run = 5; t = 28; F_Global = 0.9677, Privileged = Y ------------
+training accuracy (client 1) : 0.977150 
+client 1 accuracy on val: 0.892282
+client 1 fairness(SP, Y) on val: 0.986800
+training accuracy (client 6) : 0.838057 
+client 6 accuracy on val: 0.851887
+client 6 fairness(SP, Y) on val: 0.938200
+training accuracy (client 9) : 0.954503 
+client 9 accuracy on val: 0.902380
+client 9 fairness(SP, Y) on val: 0.740500
+training accuracy (client 11) : 0.557692 
+client 11 accuracy on val: 0.888675
+client 11 fairness(SP, Y) on val: 0.646200
+training accuracy (client 12) : 0.617021 
+client 12 accuracy on val: 0.865352
+client 12 fairness(SP, Y) on val: 0.621700
+global model accuracy on val: 0.892041
+global model fairness(SP, Y) on val: 0.967700
+global model accuracy on test: 0.893003
+global model fairness(SP, Y) on test: 0.968200
+------------ run = 5; t = 29; F_Global = 0.9677, Privileged = Y ------------
+training accuracy (client 3) : 0.956997 
+client 3 accuracy on val: 0.891080
+client 3 fairness(SP, Y) on val: 0.994100
+training accuracy (client 11) : 0.550000 
+client 11 accuracy on val: 0.900697
+client 11 fairness(SP, Y) on val: 0.665800
+training accuracy (client 14) : 0.834008 
+client 14 accuracy on val: 0.856215
+client 14 fairness(SP, Y) on val: 0.930000
+training accuracy (client 15) : 0.954503 
+client 15 accuracy on val: 0.902621
+client 15 fairness(SP, Y) on val: 0.727300
+training accuracy (client 16) : 0.570513 
+client 16 accuracy on val: 0.890118
+client 16 fairness(SP, Y) on val: 0.635900
+global model accuracy on val: 0.892282
+global model fairness(SP, Y) on val: 0.969200
+global model accuracy on test: 0.892522
+global model fairness(SP, Y) on test: 0.971300
+------------ run = 5; t = 30; F_Global = 0.9692, Privileged = Y ------------
+training accuracy (client 6) : 0.755627 
+client 6 accuracy on val: 0.885309
+client 6 fairness(SP, Y) on val: 0.875800
+training accuracy (client 10) : 0.928266 
+client 10 accuracy on val: 0.901419
+client 10 fairness(SP, Y) on val: 0.876200
+training accuracy (client 13) : 0.617021 
+client 13 accuracy on val: 0.865112
+client 13 fairness(SP, Y) on val: 0.637300
+training accuracy (client 16) : 0.954503 
+client 16 accuracy on val: 0.902621
+client 16 fairness(SP, Y) on val: 0.736100
+training accuracy (client 17) : 0.564103 
+client 17 accuracy on val: 0.888675
+client 17 fairness(SP, Y) on val: 0.656600
+global model accuracy on val: 0.893003
+global model fairness(SP, Y) on val: 0.961900
+global model accuracy on test: 0.893003
+global model fairness(SP, Y) on test: 0.961800
+------------ run = 5; t = 31; F_Global = 0.9619, Privileged = Y ------------
+training accuracy (client 2) : 0.960239 
+client 2 accuracy on val: 0.891320
+client 2 fairness(SP, Y) on val: 0.992700
+training accuracy (client 7) : 0.613636 
+client 7 accuracy on val: 0.863429
+client 7 fairness(SP, Y) on val: 0.621200
+training accuracy (client 9) : 0.615854 
+client 9 accuracy on val: 0.867516
+client 9 fairness(SP, Y) on val: 0.624900
+training accuracy (client 15) : 0.606383 
+client 15 accuracy on val: 0.863429
+client 15 fairness(SP, Y) on val: 0.628900
+training accuracy (client 17) : 0.589744 
+client 17 accuracy on val: 0.887713
+client 17 fairness(SP, Y) on val: 0.652400
+global model accuracy on val: 0.893244
+global model fairness(SP, Y) on val: 0.960400
+global model accuracy on test: 0.893003
+global model fairness(SP, Y) on test: 0.961800
+------------ run = 5; t = 32; F_Global = 0.9604, Privileged = Y ------------
+training accuracy (client 5) : 0.940782 
+client 5 accuracy on val: 0.902861
+client 5 fairness(SP, Y) on val: 0.750900
+training accuracy (client 9) : 0.550000 
+client 9 accuracy on val: 0.892522
+client 9 fairness(SP, Y) on val: 0.687500
+training accuracy (client 10) : 0.840756 
+client 10 accuracy on val: 0.848762
+client 10 fairness(SP, Y) on val: 0.967700
+training accuracy (client 12) : 0.928266 
+client 12 accuracy on val: 0.901178
+client 12 fairness(SP, Y) on val: 0.871000
+training accuracy (client 16) : 0.617021 
+client 16 accuracy on val: 0.857899
+client 16 fairness(SP, Y) on val: 0.642600
+global model accuracy on val: 0.897812
+global model fairness(SP, Y) on val: 0.931600
+global model accuracy on test: 0.897331
+global model fairness(SP, Y) on test: 0.925400
+------------ run = 5; t = 33; F_Global = 0.9316, Privileged = Y ------------
+training accuracy (client 1) : 0.976849 
+client 1 accuracy on val: 0.892282
+client 1 fairness(SP, Y) on val: 0.986800
+training accuracy (client 7) : 0.881148 
+client 7 accuracy on val: 0.905506
+client 7 fairness(SP, Y) on val: 0.764500
+training accuracy (client 9) : 0.781350 
+client 9 accuracy on val: 0.867516
+client 9 fairness(SP, Y) on val: 0.940400
+training accuracy (client 10) : 0.951718 
+client 10 accuracy on val: 0.902861
+client 10 fairness(SP, Y) on val: 0.763900
+training accuracy (client 12) : 0.634146 
+client 12 accuracy on val: 0.844193
+client 12 fairness(SP, Y) on val: 0.670600
+global model accuracy on val: 0.896610
+global model fairness(SP, Y) on val: 0.934400
+global model accuracy on test: 0.897572
+global model fairness(SP, Y) on test: 0.927800
+------------ run = 5; t = 34; F_Global = 0.9344, Privileged = Y ------------
+training accuracy (client 7) : 0.843455 
+client 7 accuracy on val: 0.847319
+client 7 fairness(SP, Y) on val: 0.988200
+training accuracy (client 10) : 0.602564 
+client 10 accuracy on val: 0.867035
+client 10 fairness(SP, Y) on val: 0.697100
+training accuracy (client 11) : 0.940782 
+client 11 accuracy on val: 0.903583
+client 11 fairness(SP, Y) on val: 0.762900
+training accuracy (client 14) : 0.627660 
+client 14 accuracy on val: 0.841068
+client 14 fairness(SP, Y) on val: 0.672200
+training accuracy (client 17) : 0.640244 
+client 17 accuracy on val: 0.843953
+client 17 fairness(SP, Y) on val: 0.649000
+global model accuracy on val: 0.899495
+global model fairness(SP, Y) on val: 0.901300
+global model accuracy on test: 0.896610
+global model fairness(SP, Y) on test: 0.885200
+------------ run = 5; t = 35; F_Global = 0.9013, Privileged = Y ------------
+training accuracy (client 6) : 0.935025 
+client 6 accuracy on val: 0.897331
+client 6 fairness(SP, Y) on val: 0.927800
+training accuracy (client 8) : 0.800643 
+client 8 accuracy on val: 0.859101
+client 8 fairness(SP, Y) on val: 0.970900
+training accuracy (client 13) : 0.952646 
+client 13 accuracy on val: 0.902861
+client 13 fairness(SP, Y) on val: 0.766900
+training accuracy (client 14) : 0.628205 
+client 14 accuracy on val: 0.850204
+client 14 fairness(SP, Y) on val: 0.743600
+training accuracy (client 16) : 0.643617 
+client 16 accuracy on val: 0.822554
+client 16 fairness(SP, Y) on val: 0.722700
+global model accuracy on val: 0.899255
+global model fairness(SP, Y) on val: 0.897700
+global model accuracy on test: 0.895888
+global model fairness(SP, Y) on test: 0.889200
+------------ run = 5; t = 36; F_Global = 0.8977, Privileged = Y ------------
+training accuracy (client 1) : 0.976849 
+client 1 accuracy on val: 0.892282
+client 1 fairness(SP, Y) on val: 0.986800
+training accuracy (client 3) : 0.956997 
+client 3 accuracy on val: 0.890118
+client 3 fairness(SP, Y) on val: 1.000000
+training accuracy (client 8) : 0.800643 
+client 8 accuracy on val: 0.859101
+client 8 fairness(SP, Y) on val: 0.978400
+training accuracy (client 10) : 0.600000 
+client 10 accuracy on val: 0.858139
+client 10 fairness(SP, Y) on val: 0.749000
+training accuracy (client 12) : 0.877049 
+client 12 accuracy on val: 0.902621
+client 12 fairness(SP, Y) on val: 0.795900
+global model accuracy on val: 0.898052
+global model fairness(SP, Y) on val: 0.938000
+global model accuracy on test: 0.897812
+global model fairness(SP, Y) on test: 0.935000
+------------ run = 5; t = 37; F_Global = 0.938, Privileged = Y ------------
+training accuracy (client 2) : 0.960239 
+client 2 accuracy on val: 0.891080
+client 2 fairness(SP, Y) on val: 0.994100
+training accuracy (client 8) : 0.797428 
+client 8 accuracy on val: 0.861986
+client 8 fairness(SP, Y) on val: 0.978000
+training accuracy (client 14) : 0.615385 
+client 14 accuracy on val: 0.857177
+client 14 fairness(SP, Y) on val: 0.743200
+training accuracy (client 15) : 0.643617 
+client 15 accuracy on val: 0.827603
+client 15 fairness(SP, Y) on val: 0.721500
+training accuracy (client 17) : 0.879098 
+client 17 accuracy on val: 0.902621
+client 17 fairness(SP, Y) on val: 0.790500
+global model accuracy on val: 0.898052
+global model fairness(SP, Y) on val: 0.945800
+global model accuracy on test: 0.896610
+global model fairness(SP, Y) on test: 0.947300
+------------ run = 5; t = 38; F_Global = 0.9458, Privileged = Y ------------
+training accuracy (client 1) : 0.976849 
+client 1 accuracy on val: 0.891801
+client 1 fairness(SP, Y) on val: 0.989700
+training accuracy (client 3) : 0.956997 
+client 3 accuracy on val: 0.890118
+client 3 fairness(SP, Y) on val: 1.000000
+training accuracy (client 4) : 0.570513 
+client 4 accuracy on val: 0.852609
+client 4 fairness(SP, Y) on val: 0.765000
+training accuracy (client 6) : 0.936262 
+client 6 accuracy on val: 0.897572
+client 6 fairness(SP, Y) on val: 0.929200
+training accuracy (client 10) : 0.928266 
+client 10 accuracy on val: 0.899014
+client 10 fairness(SP, Y) on val: 0.918100
+global model accuracy on val: 0.893965
+global model fairness(SP, Y) on val: 0.965900
+global model accuracy on test: 0.893965
+global model fairness(SP, Y) on test: 0.968500
+------------ run = 5; t = 39; F_Global = 0.9659, Privileged = Y ------------
+training accuracy (client 1) : 0.976548 
+client 1 accuracy on val: 0.892282
+client 1 fairness(SP, Y) on val: 0.986800
+training accuracy (client 4) : 0.585366 
+client 4 accuracy on val: 0.840587
+client 4 fairness(SP, Y) on val: 0.756800
+training accuracy (client 5) : 0.850202 
+client 5 accuracy on val: 0.839625
+client 5 fairness(SP, Y) on val: 1.029800
+training accuracy (client 6) : 0.790997 
+client 6 accuracy on val: 0.864871
+client 6 fairness(SP, Y) on val: 0.970400
+training accuracy (client 17) : 0.929336 
+client 17 accuracy on val: 0.899255
+client 17 fairness(SP, Y) on val: 0.910300
+global model accuracy on val: 0.896129
+global model fairness(SP, Y) on val: 0.960100
+global model accuracy on test: 0.895888
+global model fairness(SP, Y) on test: 0.955200
+------------ run = 5; t = 40; F_Global = 0.9601, Privileged = Y ------------
+training accuracy (client 1) : 0.976849 
+client 1 accuracy on val: 0.892041
+client 1 fairness(SP, Y) on val: 0.988300
+training accuracy (client 7) : 0.941899 
+client 7 accuracy on val: 0.903342
+client 7 fairness(SP, Y) on val: 0.771900
+training accuracy (client 10) : 0.566667 
+client 10 accuracy on val: 0.871844
+client 10 fairness(SP, Y) on val: 0.777900
+training accuracy (client 13) : 0.879098 
+client 13 accuracy on val: 0.903823
+client 13 fairness(SP, Y) on val: 0.782700
+training accuracy (client 16) : 0.597561 
+client 16 accuracy on val: 0.833854
+client 16 fairness(SP, Y) on val: 0.751100
+global model accuracy on val: 0.893003
+global model fairness(SP, Y) on val: 0.964800
+global model accuracy on test: 0.893244
+global model fairness(SP, Y) on test: 0.960200
+------------ run = 5; t = 41; F_Global = 0.9648, Privileged = Y ------------
+training accuracy (client 2) : 0.960239 
+client 2 accuracy on val: 0.891080
+client 2 fairness(SP, Y) on val: 0.994100
+training accuracy (client 5) : 0.768489 
+client 5 accuracy on val: 0.875451
+client 5 fairness(SP, Y) on val: 0.908000
+training accuracy (client 8) : 0.952646 
+client 8 accuracy on val: 0.903102
+client 8 fairness(SP, Y) on val: 0.739000
+training accuracy (client 12) : 0.936262 
+client 12 accuracy on val: 0.898052
+client 12 fairness(SP, Y) on val: 0.908700
+training accuracy (client 14) : 0.943017 
+client 14 accuracy on val: 0.903342
+client 14 fairness(SP, Y) on val: 0.750900
+global model accuracy on val: 0.892041
+global model fairness(SP, Y) on val: 0.973600
+global model accuracy on test: 0.892041
+global model fairness(SP, Y) on test: 0.974500
+------------ run = 5; t = 42; F_Global = 0.9736, Privileged = Y ------------
+training accuracy (client 3) : 0.956997 
+client 3 accuracy on val: 0.890599
+client 3 fairness(SP, Y) on val: 0.997100
+training accuracy (client 11) : 0.550000 
+client 11 accuracy on val: 0.890599
+client 11 fairness(SP, Y) on val: 0.733000
+training accuracy (client 12) : 0.881148 
+client 12 accuracy on val: 0.903823
+client 12 fairness(SP, Y) on val: 0.730000
+training accuracy (client 13) : 0.560976 
+client 13 accuracy on val: 0.851647
+client 13 fairness(SP, Y) on val: 0.680400
+training accuracy (client 14) : 0.774920 
+client 14 accuracy on val: 0.875210
+client 14 fairness(SP, Y) on val: 0.919800
+global model accuracy on val: 0.892522
+global model fairness(SP, Y) on val: 0.985300
+global model accuracy on test: 0.891320
+global model fairness(SP, Y) on test: 0.982500
+------------ run = 5; t = 43; F_Global = 0.9853, Privileged = Y ------------
+training accuracy (client 5) : 0.642045 
+client 5 accuracy on val: 0.852128
+client 5 fairness(SP, Y) on val: 0.699000
+training accuracy (client 8) : 0.611702 
+client 8 accuracy on val: 0.845155
+client 8 fairness(SP, Y) on val: 0.702400
+training accuracy (client 10) : 0.926124 
+client 10 accuracy on val: 0.899976
+client 10 fairness(SP, Y) on val: 0.903500
+training accuracy (client 12) : 0.935644 
+client 12 accuracy on val: 0.898293
+client 12 fairness(SP, Y) on val: 0.911900
+training accuracy (client 13) : 0.940782 
+client 13 accuracy on val: 0.903342
+client 13 fairness(SP, Y) on val: 0.766100
+global model accuracy on val: 0.892041
+global model fairness(SP, Y) on val: 0.982400
+global model accuracy on test: 0.892041
+global model fairness(SP, Y) on test: 0.977700
+------------ run = 5; t = 44; F_Global = 0.9824, Privileged = Y ------------
+training accuracy (client 3) : 0.956997 
+client 3 accuracy on val: 0.890358
+client 3 fairness(SP, Y) on val: 0.998500
+training accuracy (client 5) : 0.640244 
+client 5 accuracy on val: 0.847800
+client 5 fairness(SP, Y) on val: 0.677500
+training accuracy (client 8) : 0.953575 
+client 8 accuracy on val: 0.903102
+client 8 fairness(SP, Y) on val: 0.744900
+training accuracy (client 10) : 0.875000 
+client 10 accuracy on val: 0.905025
+client 10 fairness(SP, Y) on val: 0.752300
+training accuracy (client 13) : 0.636364 
+client 13 accuracy on val: 0.852609
+client 13 fairness(SP, Y) on val: 0.688900
+global model accuracy on val: 0.891801
+global model fairness(SP, Y) on val: 0.989700
+global model accuracy on test: 0.891080
+global model fairness(SP, Y) on test: 0.984100
+------------ run = 5; t = 45; F_Global = 0.9897, Privileged = Y ------------
+training accuracy (client 5) : 0.589744 
+client 5 accuracy on val: 0.873287
+client 5 fairness(SP, Y) on val: 0.775900
+training accuracy (client 7) : 0.550000 
+client 7 accuracy on val: 0.887954
+client 7 fairness(SP, Y) on val: 0.807000
+training accuracy (client 12) : 0.936881 
+client 12 accuracy on val: 0.898533
+client 12 fairness(SP, Y) on val: 0.918000
+training accuracy (client 14) : 0.646341 
+client 14 accuracy on val: 0.848762
+client 14 fairness(SP, Y) on val: 0.695900
+training accuracy (client 15) : 0.954503 
+client 15 accuracy on val: 0.903583
+client 15 fairness(SP, Y) on val: 0.744900
+global model accuracy on val: 0.892522
+global model fairness(SP, Y) on val: 0.985300
+global model accuracy on test: 0.891560
+global model fairness(SP, Y) on test: 0.980900
+------------ run = 5; t = 46; F_Global = 0.9853, Privileged = Y ------------
+training accuracy (client 6) : 0.567073 
+client 6 accuracy on val: 0.846357
+client 6 fairness(SP, Y) on val: 0.746600
+training accuracy (client 8) : 0.622340 
+client 8 accuracy on val: 0.843232
+client 8 fairness(SP, Y) on val: 0.709200
+training accuracy (client 11) : 0.870902 
+client 11 accuracy on val: 0.904063
+client 11 fairness(SP, Y) on val: 0.772700
+training accuracy (client 13) : 0.596154 
+client 13 accuracy on val: 0.870642
+client 13 fairness(SP, Y) on val: 0.755100
+training accuracy (client 16) : 0.634146 
+client 16 accuracy on val: 0.853330
+client 16 fairness(SP, Y) on val: 0.704700
+global model accuracy on val: 0.893003
+global model fairness(SP, Y) on val: 0.968300
+global model accuracy on test: 0.893003
+global model fairness(SP, Y) on test: 0.975600
+------------ run = 5; t = 47; F_Global = 0.9683, Privileged = Y ------------
+training accuracy (client 11) : 0.936262 
+client 11 accuracy on val: 0.898533
+client 11 fairness(SP, Y) on val: 0.916300
+training accuracy (client 14) : 0.622340 
+client 14 accuracy on val: 0.839625
+client 14 fairness(SP, Y) on val: 0.711300
+training accuracy (client 15) : 0.877049 
+client 15 accuracy on val: 0.903342
+client 15 fairness(SP, Y) on val: 0.775400
+training accuracy (client 16) : 0.596154 
+client 16 accuracy on val: 0.868478
+client 16 fairness(SP, Y) on val: 0.745000
+training accuracy (client 17) : 0.646341 
+client 17 accuracy on val: 0.848762
+client 17 fairness(SP, Y) on val: 0.696400
+global model accuracy on val: 0.893003
+global model fairness(SP, Y) on val: 0.965400
+global model accuracy on test: 0.893484
+global model fairness(SP, Y) on test: 0.966600
+------------ run = 5; t = 48; F_Global = 0.9654, Privileged = Y ------------
+training accuracy (client 5) : 0.557692 
+client 5 accuracy on val: 0.867516
+client 5 fairness(SP, Y) on val: 0.717300
+training accuracy (client 8) : 0.943017 
+client 8 accuracy on val: 0.903342
+client 8 fairness(SP, Y) on val: 0.766100
+training accuracy (client 12) : 0.579268 
+client 12 accuracy on val: 0.841068
+client 12 fairness(SP, Y) on val: 0.745400
+training accuracy (client 13) : 0.935644 
+client 13 accuracy on val: 0.898052
+client 13 fairness(SP, Y) on val: 0.913900
+training accuracy (client 17) : 0.628049 
+client 17 accuracy on val: 0.850685
+client 17 fairness(SP, Y) on val: 0.696100
+global model accuracy on val: 0.894446
+global model fairness(SP, Y) on val: 0.955400
+global model accuracy on test: 0.894686
+global model fairness(SP, Y) on test: 0.956000
+------------ run = 5; t = 49; F_Global = 0.9554, Privileged = Y ------------
+training accuracy (client 1) : 0.976849 
+client 1 accuracy on val: 0.892282
+client 1 fairness(SP, Y) on val: 0.986800
+training accuracy (client 8) : 0.566667 
+client 8 accuracy on val: 0.878577
+client 8 fairness(SP, Y) on val: 0.742900
+training accuracy (client 11) : 0.879098 
+client 11 accuracy on val: 0.903823
+client 11 fairness(SP, Y) on val: 0.762700
+training accuracy (client 12) : 0.615385 
+client 12 accuracy on val: 0.864871
+client 12 fairness(SP, Y) on val: 0.725500
+training accuracy (client 16) : 0.935644 
+client 16 accuracy on val: 0.898293
+client 16 fairness(SP, Y) on val: 0.915300
+global model accuracy on val: 0.893003
+global model fairness(SP, Y) on val: 0.982400
+global model accuracy on test: 0.891560
+global model fairness(SP, Y) on test: 0.977700
+------------ run = 5; t = 50; F_Global = 0.9824, Privileged = Y ------------
+training accuracy (client 2) : 0.958251 
+client 2 accuracy on val: 0.891320
+client 2 fairness(SP, Y) on val: 0.992700
+training accuracy (client 9) : 0.622340 
+client 9 accuracy on val: 0.866795
+client 9 fairness(SP, Y) on val: 0.581500
+training accuracy (client 14) : 0.558333 
+client 14 accuracy on val: 0.898293
+client 14 fairness(SP, Y) on val: 0.644400
+training accuracy (client 15) : 0.881148 
+client 15 accuracy on val: 0.899255
+client 15 fairness(SP, Y) on val: 0.623900
+training accuracy (client 16) : 0.564103 
+client 16 accuracy on val: 0.886511
+client 16 fairness(SP, Y) on val: 0.614300
+global model accuracy on val: 0.892282
+global model fairness(SP, Y) on val: 0.986800
+global model accuracy on test: 0.891560
+global model fairness(SP, Y) on test: 0.980900
+----------------Done (FLAlgMain)----------------
