@@ -1,0 +1,30 @@
+------------Execute (split_train_val_test)------------
+rTrain: 0.6, rVal: 0.2, rTest: 0.2, alpha: 2, num_clients: 10
+Total number of data row in law.csv: 20798
+Total number of Training datasets: 12480
+Total number of Testing datasets: 4159
+Total number of Validation datasets: 4159
+ratio :
+[[0.07335075 0.10490039 0.01449909 0.18034249 0.06462018 0.03966675
+  0.13254816 0.12366267 0.06861462 0.19779492]
+ [0.07791805 0.08881228 0.10629222 0.10071373 0.06293992 0.08003995
+  0.02669353 0.03398231 0.28950659 0.13310142]
+ [0.11880245 0.03077103 0.08354126 0.14996235 0.03945897 0.06105002
+  0.17206945 0.12046563 0.10928456 0.11459429]
+ [0.03900752 0.05647202 0.14956737 0.10650734 0.21006988 0.13120617
+  0.05231736 0.07371836 0.04849724 0.13263675]]
+Total number of data row in dataset: 12480
+Total number of clients datasets: 10
+----------------(start splitting client datasets from adult_used.csv)----------------
+client 1 training data (964, 12)
+client 2 training data (1161, 12)
+client 3 training data (428, 12)
+client 4 training data (2099, 12)
+client 5 training data (847, 12)
+client 6 training data (608, 12)
+client 7 training data (1578, 12)
+client 8 training data (1436, 12)
+client 9 training data (1084, 12)
+client 10 training data (2275, 12)
+----------------(finish splitting client datasets took 0.4166438579559326)----------------
+------------Done (split_train_val_test)------------
