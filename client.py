@@ -71,8 +71,12 @@ def PlotClientDataDist(listClientInfo, plot_dir_path, todayTime, datatype):
         # ratio (label/sensAttr)
         y_liY1inPrivileged.append(round(totalPrivilegedY1/totalCntPrivileged, 4))
         y_liY0inPrivileged.append(round(totalPrivilegedY0/totalCntPrivileged, 4))
-        y_liY1inUnprivileged.append(round(totalUnprivilegedY1/totalCntUnprivileged, 4))
-        y_liY0inUnprivileged.append(round(totalUnprivilegedY0/totalCntUnprivileged, 4))
+        if totalCntUnprivileged == 0:
+            y_liY1inUnprivileged.append(0)
+            y_liY0inUnprivileged.append(0)
+        else:
+            y_liY1inUnprivileged.append(round(totalUnprivilegedY1/totalCntUnprivileged, 4))
+            y_liY0inUnprivileged.append(round(totalUnprivilegedY0/totalCntUnprivileged, 4))
 
         # ratio (label/total amount)
         y_liPrivilegedY1.append(round(totalPrivilegedY1/totalCnt, 4))
