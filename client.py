@@ -2,6 +2,7 @@ import model as m
 import helper
 #-----------------------
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 plt.ion()
 # plt.ioff() 
@@ -232,5 +233,10 @@ def PlotServerDataDist(df, plot_dir_path, todayTime, datatype):
     plt.close()
 
 
+# # plot entire law.csv dataset distribution
+# df = pd.read_csv("law.csv")
+# df['race'] = df['race'].map({'White': 1, 'Non-White': 0})
+# df['pass_bar'] = df['pass_bar'].astype(int)
+# df.rename({'race': 'SensitiveAttr', 'pass_bar': 'Label'}, axis=1, inplace=True)
 
-
+# PlotServerDataDist(df, "20230605", "20230605", "entire")
