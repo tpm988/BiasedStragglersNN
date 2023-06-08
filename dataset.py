@@ -467,6 +467,24 @@ def plot_dirichlet_histogram(alpha, num_clients, n_samples=5000):
     plt.show()
     plt.show()
 
+def plot_pie_distribution():
+    # Data to plot
+    labels = ['validation (on server)', 'test', 'train (in clients)']
+    sizes = [20, 20, 60]
+    colors = ['lightgreen', 'pink', 'lightskyblue']
+    explode = (0.05, 0.05, 0.05)  # explode 1st slice
+
+    # Plot
+    plt.figure(figsize=(6,6))
+    plt.pie(sizes, explode=explode, labels=labels, colors=colors,
+    autopct='%1.1f%%', shadow=False, startangle=140)
+
+    plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.title('Train, Validation, and Test Data Distribution')
+
+    plt.savefig(f'Exp_setup.png', dpi=300, bbox_inches='tight')
+    plt.show()
+
 # Plot distribution
 #################################################################
 
