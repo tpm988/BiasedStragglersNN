@@ -476,8 +476,14 @@ def plot_pie_distribution():
 
     # Plot
     plt.figure(figsize=(6,6))
-    plt.pie(sizes, explode=explode, labels=labels, colors=colors,
+    patches, texts, autotexts = plt.pie(sizes, explode=explode, labels=labels, colors=colors,
     autopct='%1.1f%%', shadow=False, startangle=140)
+
+    # Increase font size of pie chart labels and autopct
+    for text in texts:
+        text.set_fontsize(14)
+    for autotext in autotexts:
+        autotext.set_fontsize(14)
 
     plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     plt.title('Train, Validation, and Test Data Distribution')
